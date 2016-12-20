@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+<UrlPattern format="{0}/dp/{1}" example="https://www.amazon.co.uk/dp/B009A4A8ZO">
+	<param index="0" name="SiteUrl" />
+	<param index="1" name="Asin" />
+</UrlPattern>
+<div id="buybox">
+	<div id="soldByThirdParty">
+		<b return="true" retAttr="innerText" name="sellerName" />
+		<span class="price3P" retAttr="innerText" name="priceStr" />
+	</div>
+	<input id="merchantID" retAttr="value" name="sellerId" />
+</div>
+<result>
+	<item name="SellerName" />
+	<item name="SellerId" />
+	<item name="Asin" />
+	<item name="SiteId" />
+</result>
+</root>

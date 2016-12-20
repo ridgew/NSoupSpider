@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <UrlPattern format="{0}/gp/offer-listing/{1}" example="https://www.amazon.co.uk/gp/offer-listing/B009A4A8ZO">
+    <param index="0" name="SiteUrl" />
+    <param index="1" name="Asin" />
+  </UrlPattern>
+  <div id="olpOfferListColumn">
+    <div class="a-row" returnCollection="true">
+      <div class="a-spacing-mini olpOffer">
+        <span class="olpOfferPrice" retAttr="innerText" name="priceStr" />
+        <span class="olpShippingPrice" retAttr="innerText" name="shippingFeeStr" firstOnly="true" />
+        <span class="olpCondition" retAttr="innerText" name="conditionType" firstOnly="true" />
+        <element tagName="noscript" retAttr="innerText" name="cnditionNote" firstOnly="true" />
+        <element class="olpSellerName">
+          <a retAttr="innerText" name="sellerName" when="&gt;img.count==0" />
+          <img retAttr="src,alt" name="sellerImage,sellerName" />
+        </element>
+      </div>
+      <div class="olpSellerColumn">
+        <a retAttr="innerText" paramName="positive" op="trim" opParams="%">
+          <attr name="href" pattern="seller=([a-zA-Z\d]{12,})" paramName="sellerId" op="Regex" retGroup="1" />
+          <attr name="href" paramName="positiceUrl" />
+        </a>
+      </div>
+    </div>
+    <element class="a-pagination" isPage="true">
+      <a retAttr="href" format="{0}/{1}" op="trim" opParams="/" paramName="nexHref" when="contains">
+        <when>
+          <attr name="innerText" value="Next" />
+        </when>
+        <params>
+          <param index="0" name="SiteUrl" />
+          <param index="1" name="nexHref" />
+        </params>
+      </a>
+    </element>
+  </div>
+  <result>
+    <item name="ConditionNote" />
+    <item name="ConditionType" />
+    <item name="DeliveryFee" />
+    <item name="DispatchedDescription" value="" />
+    <item name="ExpeditedDeliveryDescription" value="" />
+    <item name="SellerDescription" value="" />
+    <item name="Positive" applyFor="positive" />
+    <item name="PositiveHref" applyFor="positiceUrl" />
+    <item name="Price" applyFor="priceStr" />
+    <item name="SellerImage" applyFor="sellerImage" />
+    <item name="StockStatus" value="In stock" />
+    <item name="SellerName" value="sellerName" />
+    <item name="SellerNameType" value="Text" when="$SellerName!=null" />
+    <item name="SellerId" applyFor="sellerId" />
+    <item name="ShippingFeeStr" applyFor="shippingFeeStr" />
+    <item name="PriceStr" applyFor="priceStr" />
+  </result>
+</root>

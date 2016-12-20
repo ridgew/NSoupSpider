@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <UrlPattern format="{0}/gp/aag/main/ref=olp_merch_rating_3?seller={1}" example="https://www.amazon.co.uk/gp/aag/main/ref=olp_merch_rating_3?seller=APZXIW0LSZ4VN">
+    <param index="0" name="SiteUrl" />
+    <param index="1" name="SellerId" />
+  </UrlPattern>
+  <div id="aag_header">
+    <img return="true" retAttr="src" name="SellerImage"  />
+    <h1 return="true" retAttr="innerText" name="SellerName" />
+  </div>
+  <result>
+    <item name="SellerName" />
+    <item name="SellerId" />
+    <item name="SellerImage" />
+    <item name="SiteId" />
+  </result>
+</root>

@@ -1,0 +1,3082 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NSoup</name>
+    </assembly>
+    <members>
+        <member name="T:NSoup.Helper.DataUtil">
+            <summary>
+            Internal static utilities for handling data.
+            </summary>
+        </member>
+        <member name="M:NSoup.Helper.DataUtil.Load(System.IO.Stream,System.String,System.String)">
+            <summary>
+            Loads a file to a string.
+            </summary>
+            <param name="filename"></param>
+            <param name="charsetName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NSoup.Helper.DataUtil.Load(System.IO.Stream,System.String,System.String,NSoup.Parse.Parser)">
+            <summary>
+            Parses a Document from an input steam, using the provided Parser.
+            </summary>
+            <param name="input">Input stream to parse. You will need to close it</param>
+            <param name="charsetName">Character set of input</param>
+            <param name="baseUri">Base URI of document, to resolve relative links against</param>
+            <param name="parser">Alternate parser to use</param>
+            <returns></returns>
+        </member>
+        <member name="M:NSoup.Helper.DataUtil.GetCharsetFromContentType(System.String)">
+            <summary>
+            Parse out a charset from a content type header.  If the charset is not supported, returns null (so the default
+            will kick in.)
+            </summary>
+            <param name="contentType">e.g. "text/html; charset=EUC-JP"</param>
+            <returns>"EUC-JP", or null if not found. Charset is trimmed and uppercased.</returns>
+        </member>
+        <member name="T:NSoup.Helper.DescendableLinkedList`1">
+            <summary>
+            Provides a descending iterator and other 1.6 methods to allow support on the 1.5 JRE.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:NSoup.Helper.DescendableLinkedList`1.#ctor">
+            <summary>
+            Create a new DescendableLinkedList.
+            </summary>
+        </member>
+        <member name="M:NSoup.Helper.DescendableLinkedList`1.GetDescendingEnumerator">
+            <summary>
+            Get an iterator that starts and the end of the list and works towards the start.
+            </summary>
+            <returns>an iterator that starts and the end of the list and works towards the start.</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Url(System.Uri)">
+            <summary>
+            Set the request URL to fetch. The protocol must be HTTP or HTTPS.
+            </summary>
+            <param name="url">URL to connect to</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Url(System.String)">
+            <summary>
+            Set the request URL to fetch. The protocol must be HTTP or HTTPS.
+            </summary>
+            <param name="url">URL to connect to</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.UserAgent(System.String)">
+            <summary>
+            Set the request user-agent header.
+            </summary>
+            <param name="userAgent">user-agent to use</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Timeout(System.Int32)">
+            <summary>
+            Set the request timeouts (connect and read). If a timeout occurs, an IOException will be thrown. The default 
+            timeout is 3 seconds (3000 millis). A timeout of zero is treated as an infinite timeout.
+            </summary>
+            <param name="millis">number of milliseconds (thousandths of a second) before timing out connects or reads.</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Referrer(System.String)">
+            <summary>
+            Set the request referrer (aka "referer") header.
+            </summary>
+            <param name="referrer">referrer to use</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.FollowRedirects(System.Boolean)">
+            <summary>
+            Configures the connection to (not) follow server redirects. By default this is <b>true</b>.
+            </summary>
+            <param name="followRedirects">true if server redirects should be followed.</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Method(NSoup.Method)">
+            <summary>
+            Set the request method to use, GET or POST. Default is GET.
+            </summary>
+            <param name="method">HTTP request method</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.IgnoreHttpErrors(System.Boolean)">
+            <summary>
+            Configures the connection to not throw exceptions when a HTTP error occurs. (4xx - 5xx, e.g. 404 or 500). By 
+            default this is <b>false</b>; an IOException is thrown if an error is encountered. If set to <b>true</b>, the 
+            response is populated with the error body, and the status message will reflect the error.
+            </summary>
+            <param name="ignoreHttpErrors">false (default) if HTTP errors should be ignored</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.IgnoreContentType(System.Boolean)">
+            <summary>
+            Ignore the document's Content-Type when parsing the response. By default this is <b>false</b>, an unrecognised 
+            content-type will cause an IOException to be thrown. (This is to prevent producing garbage by attempting to parse 
+            a JPEG binary image, for example.) Set to true to force a parse attempt regardless of content type.
+            </summary>
+            <param name="ignoreContentType">set to true if you would like the content type ignored on parsing the response into a Document</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Data(System.String,System.String)">
+            <summary>
+            Add a request data parameter. Request parameters are sent in the request query string for GETs, and in the request 
+            body for POSTs. A request may have multiple values of the same name.
+            </summary>
+            <param name="key">data key</param>
+            <param name="value">data value</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Data(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Adds all of the supplied data to the request data parameters
+            </summary>
+            <param name="data">dictionary of data parameters</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <!-- 对于成员“M:NSoup.IConnection.Data(System.String[])”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.IConnection.Header(System.String,System.String)">
+            <summary>
+            Set a request header.
+            </summary>
+            <param name="name">header name</param>
+            <param name="value">header value</param>
+            <returns>this IConnection, for chaining</returns>
+            <seealso cref="!:IConnection.Request.Headers()"/>
+        </member>
+        <member name="M:NSoup.IConnection.Cookie(System.String,System.String)">
+            <summary>
+            Set a cookie to be sent in the request.
+            </summary>
+            <param name="name">name of cookie</param>
+            <param name="value">value of cookie</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Cookies(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Adds each of the supplied cookies to the request.
+            </summary>
+            <param name="cookies">Map of cookie name -> value pairs</param>
+            <returns>This Connection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Parser(NSoup.Parse.Parser)">
+            <summary>
+            Provide an alternate parser to use when parsing the response to a Document.
+            </summary>
+            <param name="parser">Alternate parser</param>
+            <returns>This Connection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Get">
+            <summary>
+            Execute the request as a GET, and parse the result.
+            </summary>
+            <returns>Parsed Document</returns>
+            <exception cref="T:NSoup.HttpStatusException">If the response is not OK and HTTP response errors are not ignored</exception>
+            <exception cref="T:NSoup.UnsupportedMimeTypeException">If the response mime type is not supported and those errors are not ignored</exception>
+            //@throws java.net.MalformedURLException if the request URL is not a HTTP or HTTPS URL, or is otherwise malformed
+            //@throws java.net.SocketTimeoutException if the connection times out
+            <exception cref="T:System.IO.IOException">On error</exception>
+        </member>
+        <member name="M:NSoup.IConnection.Post">
+            <summary>
+            Execute the request as a POST, and parse the result.
+            </summary>
+            <returns>Parsed Document</returns>
+            <exception cref="T:NSoup.HttpStatusException">If the response is not OK and HTTP response errors are not ignored</exception>
+            <exception cref="T:NSoup.UnsupportedMimeTypeException">If the response mime type is not supported and those errors are not ignored</exception>
+            //@throws java.net.MalformedURLException if the request URL is not a HTTP or HTTPS URL, or is otherwise malformed
+            //@throws java.net.SocketTimeoutException if the connection times out
+            <exception cref="T:System.IO.IOException">On error</exception>
+        </member>
+        <member name="M:NSoup.IConnection.Execute">
+            <summary>
+            Execute the request.
+            </summary>
+            <returns>a response object</returns>
+            <exception cref="T:NSoup.HttpStatusException">If the response is not OK and HTTP response errors are not ignored</exception>
+            <exception cref="T:NSoup.UnsupportedMimeTypeException">If the response mime type is not supported and those errors are not ignored</exception>
+            //@throws java.net.MalformedURLException if the request URL is not a HTTP or HTTPS URL, or is otherwise malformed
+            //@throws java.net.SocketTimeoutException if the connection times out
+            <exception cref="T:System.IO.IOException">On error</exception>
+        </member>
+        <member name="M:NSoup.IConnection.Request">
+            <summary>
+            Get the request object associated with this IConnection
+            </summary>
+            <returns>request</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Request(NSoup.IRequest)">
+            <summary>
+            Set the IConnection's request
+            </summary>
+            <param name="request">new request object</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Response">
+            <summary>
+            Get the response, once the request has been executed
+            </summary>
+            <returns>response</returns>
+        </member>
+        <member name="M:NSoup.IConnection.Response(NSoup.IResponse)">
+            <summary>
+            Set the connection's response
+            </summary>
+            <param name="response">new response</param>
+            <returns>this IConnection, for chaining</returns>
+        </member>
+        <member name="T:NSoup.IConnectionBase`1">
+            <summary>
+            Common methods for Requests and Responses
+            </summary>
+            <typeparam name="T">Type of IConnectionBase, either Request or Response</typeparam>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Url">
+            <summary>
+            Gets the URL
+            </summary>
+            <returns>URL</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Url(System.Uri)">
+            <summary>
+            Sets the URL
+            </summary>
+            <param name="url">new URL</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Method">
+            <summary>
+            Gets the request method
+            </summary>
+            <returns>method</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Method(NSoup.Method)">
+            <summary>
+            Sets the request method
+            </summary>
+            <param name="method">new method</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Header(System.String)">
+            <summary>
+            Gets the value of a header. This is a simplified header model, where a header may only have one value.
+            Header names are case insensitive.
+            </summary>
+            <param name="name">name of header (case insensitive)</param>
+            <returns>value of header, or null if not set.</returns>
+            <see cref="M:NSoup.IConnectionBase`1.HasHeader(System.String)"/>
+            <see cref="M:NSoup.IConnectionBase`1.Cookie(System.String)"/>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Header(System.String,System.String)">
+            <summary>
+            Sets a header. This method will overwrite any existing header with the same case insensitive name. 
+            </summary>
+            <param name="name">Name of header</param>
+            <param name="value">Value of header</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.HasHeader(System.String)">
+            <summary>
+            Check if a header is present
+            </summary>
+            <param name="name">name of header (case insensitive)</param>
+            <returns>if the header is present in this request/response</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.RemoveHeader(System.String)">
+            <summary>
+            Remove a header by name
+            </summary>
+            <param name="name">name of header to remove (case insensitive)</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Headers">
+            <summary>
+            Retrieve all of the request/response headers as a map
+            </summary>
+            <returns>headers</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Cookie(System.String)">
+            <summary>
+            Gets a cookie value by name from this request/response.
+            Response objects have a simplified cookie model. Each cookie set in the response is added to the response 
+            object's cookie key=value map. The cookie's path, domain, and expiry date are ignored.
+            </summary>
+            <param name="name">name of cookie to retrieve.</param>
+            <returns>value of cookie, or null if not set</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Cookie(System.String,System.String)">
+            <summary>
+            Sets a cookie in this request/response.
+            </summary>
+            <param name="name">name of cookie</param>
+            <param name="value">value of cookie</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.HasCookie(System.String)">
+            <summary>
+            Check if a cookie is present
+            </summary>
+            <param name="name">name of cookie</param>
+            <returns>if the cookie is present in this request/response</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.RemoveCookie(System.String)">
+            <summary>
+            Remove a cookie by name
+            </summary>
+            <param name="name">name of cookie to remove</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IConnectionBase`1.Cookies">
+            <summary>
+            Retrieve all of the request/response cookies as a map
+            </summary>
+            <returns>cookies</returns>
+        </member>
+        <member name="T:NSoup.IResponse">
+            <summary>
+            Represents a HTTP response.
+            </summary>
+        </member>
+        <member name="M:NSoup.IResponse.StatusCode">
+            <summary>
+            Gets the status code of the response.
+            </summary>
+            <returns>status code</returns>
+        </member>
+        <member name="M:NSoup.IResponse.StatusMessage">
+            <summary>
+            Gets the status message of the response.
+            </summary>
+            <returns>status message</returns>
+        </member>
+        <member name="M:NSoup.IResponse.Charset">
+            <summary>
+            Gets the character set name of the response.
+            </summary>
+            <returns>character set name</returns>
+        </member>
+        <member name="M:NSoup.IResponse.ContentType">
+            <summary>
+            Gets the response content type (e.g. "text/html");
+            </summary>
+            <returns>the response content type</returns>
+        </member>
+        <member name="M:NSoup.IResponse.Parse">
+            <summary>
+            Parse the body of the response as a Document.
+            </summary>
+            <returns>a parsed Document</returns>
+            <exception cref="T:System.IO.IOException"/>
+        </member>
+        <member name="M:NSoup.IResponse.Body">
+            <summary>
+            Gets the body of the response as a plain string.
+            </summary>
+            <returns>body</returns>
+        </member>
+        <member name="M:NSoup.IResponse.BodyAsBytes">
+            <summary>
+            Gets the body of the response as an array of bytes.
+            </summary>
+            <returns>body bytes</returns>
+        </member>
+        <member name="P:NSoup.IResponse.NumRedirects">
+            <summary>
+            Gets number of redirects.
+            </summary>
+        </member>
+        <member name="T:NSoup.IRequest">
+            <summary>
+            Represents a HTTP request.
+            </summary>
+        </member>
+        <member name="M:NSoup.IRequest.Timeout">
+            <summary>
+            Gets the request timeout, in milliseconds.
+            </summary>
+            <returns>the timeout in milliseconds.</returns>
+        </member>
+        <member name="M:NSoup.IRequest.Timeout(System.Int32)">
+            <summary>
+            Update the request timeout.
+            </summary>
+            <param name="millis">timeout, in milliseconds</param>
+            <returns>this Request, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.MaxBodySize(System.Int32)">
+            <summary>
+            Update the maximum allowed body size
+            </summary>
+            <param name="bytes">bytes, as an integer</param>
+            <returns>this Rquest for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.FollowRedirects">
+            <summary>
+            Get the current followRedirects configuration.
+            </summary>
+            <returns>true if followRedirects is enabled.</returns>
+        </member>
+        <member name="M:NSoup.IRequest.FollowRedirects(System.Boolean)">
+            <summary>
+            Configures the request to (not) follow server redirects. By default this is <b>true</b>.
+            </summary>
+            <param name="followRedirects">true if server redirects should be followed.</param>
+            <returns>This IRequest, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.IgnoreHttpErrors">
+            <summary>
+            Gets the current IgnoreHttpErrors configuration.
+            </summary>
+            <returns>true if errors will be ignored; false (default) if HTTP errors will cause an IOException to be thrown</returns>
+        </member>
+        <member name="M:NSoup.IRequest.IgnoreHttpErrors(System.Boolean)">
+            <summary>
+            Configures the request to ignore HTTP errors in the response.
+            </summary>
+            <param name="ignoreHttpErrors">set to true to ignore HTTP errors.</param>
+            <returns>This IRequest, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.ValidateTLSCertificates(System.Boolean)">
+            <summary>
+            Configure the request to validate TLS Certificates
+            </summary>
+            <param name="value">set to true to validate tls certs</param>
+            <returns>this IRequest for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.IgnoreContentType">
+            <summary>
+            Gets the current IgnoreContentType configuration.
+            </summary>
+            <returns>true if invalid content-types will be ignored; false (default) if they will cause an IOException to be thrown</returns>
+        </member>
+        <member name="M:NSoup.IRequest.IgnoreContentType(System.Boolean)">
+            <summary>
+            Configures the request to ignore the Content-Type of the response.
+            </summary>
+            <param name="ignoreContentType">set to true to ignore the contenet type</param>
+            <returns>This IRequest, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.Data(NSoup.Helper.KeyVal)">
+            <summary>
+            Add a data parameter to the request
+            </summary>
+            <param name="keyval">data to add.</param>
+            <returns>this Request, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.Data">
+            <summary>
+            Get all of the request's data parameters
+            </summary>
+            <returns>collection of keyvals</returns>
+        </member>
+        <member name="M:NSoup.IRequest.Parser(NSoup.Parse.Parser)">
+            <summary>
+            Specify the parser to use when parsing the document.
+            </summary>
+            <param name="parser">Parser to use.</param>
+            <returns>This IRequest, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IRequest.Parser">
+            <summary>
+            Get the current parser to use when parsing the document.
+            </summary>
+            <returns>Current Parser</returns>
+        </member>
+        <member name="T:NSoup.IKeyVal">
+            <summary>
+            A Key Value tuple.
+            </summary>
+        </member>
+        <member name="M:NSoup.IKeyVal.Key(System.String)">
+            <summary>
+            Update the key of a keyval
+            </summary>
+            <param name="key">new key</param>
+            <returns>this KeyVal, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.Key">
+            <summary>
+            Gets the key of a keyval
+            </summary>
+            <returns>the key</returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.Value(System.String)">
+            <summary>
+            Update the value of a keyval
+            </summary>
+            <param name="value">the new value</param>
+            <returns>this KeyVal, for chaining</returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.Value">
+            <summary>
+            Gets the value of a keyval
+            </summary>
+            <returns>the value</returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.InputStream(System.IO.Stream)">
+            <summary>
+            Update stream of a keyval
+            </summary>
+            <param name="inputStream"></param>
+            <returns></returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.InputStream">
+            <summary>
+            Get the stream of a keyval
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:NSoup.IKeyVal.HasInputStream">
+            <summary>
+            Determine if keyval has a stream
+            </summary>
+            <returns></returns>
+        </member>
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.#ctor”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.#ctor(System.Int32)”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.#ctor(System.Collections.Generic.IEnumerable{`0})”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.#ctor(System.Collections.Generic.IEqualityComparer{`0})”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.#ctor(System.Collections.Generic.IEnumerable{`0},System.Collections.Generic.IEqualityComparer{`0})”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.Clear”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.Contains(`0)”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.CopyTo(`0[],System.Int32)”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.Remove(`0)”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“M:NSoup.LinkedHashSet`1.TrimExcess”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“P:NSoup.LinkedHashSet`1.Count”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“P:NSoup.LinkedHashSet`1.Comparer”忽略有格式错误的 XML 注释 -->
+        <member name="T:NSoup.Helper.StringUtil">
+            A minimal String utility class. Designed for internal jsoup use only.
+        </member>
+        <member name="M:NSoup.Helper.StringUtil.Join(System.Collections.Generic.ICollection{System.String},System.String)">
+            <summary>
+            Join a collection of strings by a seperator
+            </summary>
+            <param name="strings">collection of string objects</param>
+            <param name="sep">string to place between strings</param>
+            <returns>joined string</returns>
+        </member>
+        <member name="M:NSoup.Helper.StringUtil.Padding(System.Int32)">
+            <summary>
+            Returns space padding
+            </summary>
+            <param name="width">amount of padding desired</param>
+            <returns>string of spaces * width</returns>
+        </member>
+        <member name="M:NSoup.Helper.StringUtil.IsWhiteSpace(System.Char)">
+            <summary>
+            Tests if a code point is "whitespace" as defined in the HTML spec.
+            </summary>
+            <param name="c">Code point to test</param>
+            <returns>True if code point is whitespace, false otherwise</returns>
+        </member>
+        <member name="T:NSoup.HttpStatusException">
+            <summary>
+            Signals that a HTTP request resulted in a not OK HTTP response.
+            </summary>
+        </member>
+        <member name="T:NSoup.Method">
+            <summary>
+            GET and POST http methods.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.Attribute">
+            <summary>
+            A single key + value attribute. Keys are trimmed and normalised to lower-case.
+            </summary>
+            <!-- 
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->   
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.#ctor(System.String,System.String)">
+            <summary>
+            Create a new attribute from unencoded (raw) key and value. 
+            </summary>
+            <param name="key">attribute key</param>
+            <param name="value">attribute value</param>
+            <see cref="!:createFromEncoded"/>
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.GetValue">
+            <summary>
+            Get the attribute value.
+            </summary>
+            <returns>the attribute value</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.SetValue(System.String)">
+            <summary>
+            Set the attribute value.
+            </summary>
+            <param name="value">the new attribute value; must not be null</param>
+            <returns>old value</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.Html">
+            <summary>
+            Get the HTML representation of this attribute; e.g. <code>href="index.html"</code>
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.ToString">
+            <summary>
+            Get the string representation of this attribute, implemented as <see cref="M:NSoup.Nodes.Attribute.Html"/>.
+            </summary>
+            <returns>string</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Attribute.CreateFromEncoded(System.String,System.String)">
+            <summary>
+            Create a new Attribute from an unencoded key and a HTML attribute encoded value.
+            </summary>
+            <param name="unencodedKey">assumes the key is not encoded, as can be only run of simple \w chars.</param>
+            <param name="encodedValue">HTML attribute encoded value</param>
+            <returns>attribute</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Attribute.Key">
+            <summary>
+            Gets or sets the Key property.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Attribute.Value">
+            <summary>
+            Gets or sets the Value property.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.Attributes">
+            <summary>
+            The attributes of an Element.
+            </summary>
+            <remarks>
+            Attributes are treated as a map: there can be only one value associated with an attribute key.
+            Attribute key and value comparisons are done case insensitively, and keys are normalised to
+            lower-case.
+            </remarks>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.Add(System.String,System.String)">
+            <summary>
+            Set a new attribute, or replace an existing one by key.
+            </summary>
+            <param name="key">attribute key</param>
+            <param name="value">attribute value</param>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.Add(NSoup.Nodes.Attribute)">
+            <summary>
+            Set a new attribute, or replace an existing one by key.
+            </summary>
+            <param name="attribute">attribute</param>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.GetValue(System.String)">
+            <summary>
+            Get an attribute value by key.
+            </summary>
+            <param name="key">the attribute key</param>
+            <returns>the attribute value if set; or empty string if not set.</returns>
+            <see cref="!:HasKey(string)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.Remove(System.String)">
+            <summary>
+            Remove an attribute by key.
+            </summary>
+            <param name="key">attribute key to remove</param>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.ContainsKey(System.String)">
+            <summary>
+            Tests if these attributes contain an attribute with this key.
+            </summary>
+            <param name="key">key to check for</param>
+            <returns>true if key exists, false otherwise</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.AddRange(NSoup.Nodes.Attributes)">
+            <summary>
+            Add all the attributes from the incoming set to this set.
+            </summary>
+            <param name="incoming">attributes to add to these attributes.</param>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.AsList">
+            <summary>
+            Gets the attributes as a List, for iteration.
+            </summary>
+            <remarks>
+            Do not modify the keys of the attributes via this view, as changes 
+            to keys will not be recognised in the containing set.
+            </remarks>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.GetDataset">
+            <summary>
+            Retrieves a filtered view of attributes that are HTML5 custom data attributes; that is, attributes with keys
+            starting with <code>data-</code>.
+            </summary>
+            <returns>map of custom data attributes.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Attributes.Html">
+            <summary>
+            Gets the HTML representation of these attributes.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Attributes.Count">
+            <summary>
+            Gets the number of attributes in this set.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.Attributes.Dataset">
+            <summary>
+            A dictionary which filters through the list of attribute and works only against data attributes (attributes prefixed with "data-").
+            </summary>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Attributes.Dataset.GetDataAttributeKeyValuePair(System.String,System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="T:NSoup.Nodes.Comment">
+            <summary>
+            A comment node.
+            </summary>
+            <!--
+            Original author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="T:NSoup.Nodes.Node">
+            <summary>
+            The base, abstract Node model. Elements, Documents, Comments etc are all Node instances.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.Node.#ctor(System.String,NSoup.Nodes.Attributes)">
+            <summary>
+            Create a new Node.
+            </summary>
+            <param name="baseUri">base URI</param>
+            <param name="attributes">attributes (not null, but may be empty)</param>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Attr(System.String)">
+            <summary>
+            Get an attribute's value by its key.
+            </summary>
+            <remarks>
+            To get an absolute URL from an attribute that may be a relative URL, prefix the key with <code><b>abs</b></code>, 
+            which is a shortcut to the {@link #absUrl} method. 
+            E.g.: <code>string url = a.attr("abs:href");</code>
+            </remarks>
+            <param name="attributeKey">The attribute key.</param>
+            <returns>The attribute, or empty string if not present (to avoid nulls).</returns>
+            <seealso cref="P:NSoup.Nodes.Node.Attributes"/>
+            <seealso cref="M:NSoup.Nodes.Node.HasAttr(System.String)"/>
+            <seealso cref="M:NSoup.Nodes.Node.AbsUrl(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Attr(System.String,System.String)">
+            <summary>
+            Set an attribute (key=value). If the attribute already exists, it is replaced.
+            </summary>
+            <param name="attributeKey">The attribute key.</param>
+            <param name="attributeValue">The attribute value.</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.HasAttr(System.String)">
+            <summary>
+            Test if this element has an attribute.
+            </summary>
+            <param name="attributeKey">The attribute key to check.</param>
+            <returns>true if the attribute exists, false if not.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.RemoveAttr(System.String)">
+            <summary>
+            Remove an attribute from this element.
+            </summary>
+            <param name="attributeKey">The attribute to remove.</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.AbsUrl(System.String)">
+            <summary>
+            Get an absolute URL from a URL attribute that may be relative (i.e. an <code>&lt;a href&gt;</code> or 
+            <code>&lt;img src&gt;</code>).
+            E.g.: <code>String absUrl = linkEl.absUrl("href");</code>
+            </summary>
+            <remarks>
+            If the attribute value is already absolute (i.e. it starts with a protocol, like 
+            <code>http://</code> or <code>https://</code> etc), and it successfully parses as a URL, the attribute is 
+            returned directly. Otherwise, it is treated as a URL relative to the element's <see cref="P:NSoup.Nodes.Node.BaseUri"/>, and made 
+            absolute using that. 
+            As an alternate, you can use the <see cref="!:Attr()"/> method with the <code>abs:</code> prefix, e.g.:
+            <code>String absUrl = linkEl.attr("abs:href");</code>
+            </remarks>
+            <param name="attributeKey">The attribute key</param>
+            <returns>
+            An absolute URL if one could be made, or an empty string (not null) if the attribute was missing or 
+            could not be made successfully into a URL.
+            </returns>
+            <seealso cref="!:Attr()"/>
+            <seealso cref="T:System.Uri"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.GetChildNode(System.Int32)">
+            <summary>
+            Get a child node by index
+            </summary>
+            <param name="index">index of child node</param>
+            <returns>the child node at this index.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Remove">
+            <summary>
+            Remove (delete) this node from the DOM tree. If this node has children, they are also removed.
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Before(System.String)">
+            <summary>
+            Insert the specified HTML into the DOM before this node (i.e. as a preceding sibling).
+            </summary>
+            <param name="html">HTML to add before this node</param>
+            <returns>this node, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Node.After(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Before(NSoup.Nodes.Node)">
+            <summary>
+            Insert the specified node into the DOM before this node (i.e. as a preceding sibling).
+            </summary>
+            <param name="node">node to add before this node</param>
+            <returns>this node, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Node.After(NSoup.Nodes.Node)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.After(System.String)">
+            <summary>
+            Insert the specified HTML into the DOM after this node (i.e. as a following sibling).
+            </summary>
+            <param name="html">HTML to add after this node</param>
+            <returns>this node, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Node.Before(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.After(NSoup.Nodes.Node)">
+            <summary>
+            Insert the specified node into the DOM after this node (i.e. as a following sibling).
+            </summary>
+            <param name="node">node to add after this node</param>
+            <returns>this node, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Node.Before(NSoup.Nodes.Node)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Wrap(System.String)">
+            <summary>
+            Wrap the supplied HTML around this node.
+            </summary>
+            <param name="html">HTML to wrap around this element, e.g. <code>&lt;div class="head"&gt;&lt;/div&gt;</code>. Can be arbitrarily deep.</param>
+            <returns>this node, for chaining.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Unwrap">
+            <summary>
+            Removes this node from the DOM, and moves its children up into the node's parent. This has the effect of dropping 
+            the node but keeping its children.
+            
+            For example, with the input html:
+            <code>&lt;div&gt;One &lt;span&gt;Two &lt;b&gt;Three&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;</code> 
+            Calling <code>element.Unwrap()</code> on the <code>span</code> element will result in the html: 
+            <code>&lt;div&gt;One Two &lt;b&gt;Three&lt;/b&gt;</code>
+            and the <code>"Two "</code> <see cref="T:NSoup.Nodes.TextNode">TextNode</see> being returned.
+            </summary>
+            <returns>the first child of this node, after the node has been unwrapped. Null if the node had no children.</returns>
+            <see cref="M:NSoup.Nodes.Node.Remove"/>
+            <see cref="M:NSoup.Nodes.Node.Wrap(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Node.ReplaceWith(NSoup.Nodes.Node)">
+            <summary>
+            Replace this node in the DOM with the supplied node.
+            </summary>
+            <param name="input">in the node that will will replace the existing node.</param>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Traverse(NSoup.Select.NodeVisitor)">
+            <summary>
+            Perform a depth-first traversal through this node and its descendants.
+            </summary>
+            <param name="nodeVisitor">The visitor callbacks to perform on each node</param>
+            <returns>This node, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.OuterHtml">
+            <summary>
+            Get the outer HTML of this node.
+            </summary>
+            <returns>HTML</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Node.OuterHtmlHead(System.Text.StringBuilder,System.Int32,NSoup.Nodes.OutputSettings)">
+            <summary>
+            Gets the outer HTML of this node.
+            </summary>
+            <param name="accum">accumulator to place HTML into</param>
+        </member>
+        <member name="M:NSoup.Nodes.Node.Clone">
+            <summary>
+            Create a stand-alone, deep copy of this node, and all of its children. The cloned node will have no siblings or
+            parent node. As a stand-alone object, any changes made to the clone or any of its children will not impact the
+            original node.
+            </summary>
+            <remarks>
+            The cloned node may be adopted into another Document or node structure using <see cref="M:NSoup.Nodes.Element.AppendChild(NSoup.Nodes.Node)"/>.
+            </remarks>
+            <returns>stand-alone cloned node</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Node.NodeName">
+            <summary>
+            Gets the node name of this node. Use for debugging purposes and not logic switching (for that, use <code>is</code> keyword).
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.Attributes">
+            <summary>
+            Gets all of the element's attributes.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.BaseUri">
+            <summary>
+            Gets or sets the base URI of this node and all of its descendants.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.ChildNodes">
+            <summary>
+            Gets this node's children. Presented as an unmodifiable list: new children can not be added, but the child nodes 
+            themselves can be manipulated.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.ParentNode">
+            <summary>
+            Gets or sets this node's parent node.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.OwnerDocument">
+            <summary>
+            Gets the Document associated with this Node. 
+            </summary>
+            <returns>the Document associated with this Node, or null if there is no such Document.</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Node.SiblingNodes">
+            <summary>
+            Retrieves this node's sibling nodes. Similar to <see cref="P:NSoup.Nodes.Node.ChildNodes"/>, node.Parent.ChildNodes, but does not
+            include this node (a node is not a sibling of itself).
+            </summary>
+            <returns>Node siblings. If the node has no parent, returns an empty list.</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Node.NextSibling">
+            <summary>
+            Gets this node's next sibling.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.PreviousSibling">
+            <summary>
+            Gets this node's previous sibling.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Node.SiblingIndex">
+            <summary>
+            Gets the list index of this node in its node sibling list. I.e. if this is the first node sibling, returns 0.
+            </summary>
+            <seealso cref="P:NSoup.Nodes.Element.ElementSiblingIndex"/>
+        </member>
+        <member name="T:NSoup.Select.NodeVisitor">
+            <summary>
+            Node visitor interface. Provide an implementing class to NodeTraversor to iterate through nodes.
+            This interface provides two methods, Head() and Tail(). The head method is called when the node is first
+            seen, and the tail method when all of the node's children have been visited. As an example, head can be used to
+            create a start tag for a node, and tail to create the end tag.
+            </summary>
+        </member>
+        <member name="M:NSoup.Select.NodeVisitor.Head(NSoup.Nodes.Node,System.Int32)">
+            <summary>
+            Callback for when a node is first visited.
+            </summary>
+            <param name="node">The node being visited.</param>
+            <param name="depth">The depth of the node, relative to the root node. E.g., the root node has depth 0, and a child node
+            of that will have depth 1.</param>
+        </member>
+        <member name="M:NSoup.Select.NodeVisitor.Tail(NSoup.Nodes.Node,System.Int32)">
+            <summary>
+            Callback for when a node is last visited, after all of its descendants have been visited.
+            </summary>
+            <param name="node">The node being visited.</param>
+            <param name="depth">the depth of the node, relative to the root node. E.g., the root node has depth 0, and a child node
+            of that will have depth 1.</param>
+        </member>
+        <member name="M:NSoup.Nodes.Comment.#ctor(System.String,System.String)">
+            <summary>
+            Create a new comment node.
+            </summary>
+            <param name="data">The contents of the comment</param>
+            <param name="baseUri">base URI</param>
+        </member>
+        <member name="M:NSoup.Nodes.Comment.GetData">
+            <summary>
+            Get the contents of the comment.
+            </summary>
+            <returns>Content</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Comment.NodeName">
+            <summary>
+            Gets the node's name.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.DataNode">
+            <summary>
+            A data node, for contents of style, script tags etc, where contents should not show in text().
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.DataNode.#ctor(System.String,System.String)">
+            <summary>
+            Create a new DataNode.
+            </summary>
+            <param name="data">data contents</param>
+            <param name="baseUri">base URI</param>
+        </member>
+        <member name="M:NSoup.Nodes.DataNode.GetWholeData">
+            <summary>
+            Get the data contents of this node. Will be unescaped and with original new lines, space etc.
+            </summary>
+            <returns>data</returns>
+        </member>
+        <member name="M:NSoup.Nodes.DataNode.setWholeData(System.String)">
+            <summary>
+            Set the data contents of this node.
+            </summary>
+            <param name="data">unencoded data</param>
+            <returns>this node, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.DataNode.CreateFromEncoded(System.String,System.String)">
+            <summary>
+            Create a new DataNode from HTML encoded data.
+            </summary>
+            <param name="encodedData">encoded data</param>
+            <param name="baseUri">bass URI</param>
+            <returns>new DataNode</returns>
+        </member>
+        <member name="P:NSoup.Nodes.DataNode.NodeName">
+            <summary>
+            Gets the node's name.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.Document">
+            <summary>
+            A HTML Document.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.Element.#ctor(NSoup.Parse.Tag,System.String,NSoup.Nodes.Attributes)">
+            <summary>
+            Create a new, standalone Element. (Standalone in that is has no parent.)
+            </summary>
+            <param name="tag">tag of this element</param>
+            <param name="baseUri">baseUri the base URI</param>
+            <param name="attributes">initial attributes</param>
+            <see cref="M:NSoup.Nodes.Element.AppendChild(NSoup.Nodes.Node)"/>
+            <see cref="M:NSoup.Nodes.Element.AppendElement(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.#ctor(NSoup.Parse.Tag,System.String)">
+            <summary>
+            Create a new Element from a tag and a base URI.
+            </summary>
+            <param name="tag">element tag</param>
+            <param name="baseUri">the base URI of this element. It is acceptable for the base URI to be an empty string, but not null.</param>
+            <see cref="!:Tag.ValueOf(string)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.TagName">
+            <summary>
+            Gets the name of the tag for this element. E.g: <code>div</code>
+            </summary>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Element.TagName(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Nodes.Element.Attr(System.String,System.String)">
+            <summary>
+            Set an attribute value on this element. If this element already has an attribute with the 
+            key, its value is updated; otherwise, a new attribute is added.
+            </summary>
+            <param name="attributeKey">attribute key</param>
+            <param name="attributeValue">attribute value</param>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Child(System.Int32)">
+            <summary>
+            Get a child element of this element, by its 0-based index number.
+            
+            * @param index the index number of the element to retrieve
+            </summary>
+            <remarks>
+            Note that an element can have both mixed Nodes and Elements as children. This method inspects 
+            a filtered list of children that are elements, and the index is based on that filtered list.
+            </remarks>
+            <param name="index">The index of child to return</param>
+            <returns>the child element, if it exists, or <code>null</code> if absent.</returns>
+            <see cref="!:ChildNode(int)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Select(System.String)">
+            <summary>
+            Find elements that match the <see cref="T:NSoup.Select.Selector"/> query, with this element as the starting context. Matched elements 
+            may include this element, or any of its children.
+            </summary>
+            <param name="cssQuery">a Selector CSS-like query</param>
+            <returns>elements that match the query (empty if none match)</returns>
+            <see cref="T:NSoup.Select.Selector"/>
+            <remarks>
+            This method is generally more powerful to use than the DOM-type {@code getElementBy*} methods, because 
+            multiple filters can be combined, e.g.: 
+            &lt;ul&gt;
+            &lt;li&gt;<code>el.select("a[href]")</code> - finds links <code>a</code> tags with <code>href</code> attributes) 
+            &lt;li&gt;<code>el.select("a[href*=example.com]")</code> - finds links pointing to example.com (loosely) 
+            &lt;/ul&gt; 
+            See the query syntax documentation in <see cref="T:NSoup.Select.Selector"/>
+            </remarks>
+        </member>
+        <member name="M:NSoup.Nodes.Element.AppendChild(NSoup.Nodes.Node)">
+            <summary>
+            Add a node child node to this element.
+            </summary>
+            <param name="child">node to add. Must not already have a parent.</param>
+            <returns>this element, so that you can add more child nodes or elements.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.PrependChild(NSoup.Nodes.Node)">
+            <summary>
+            Add a node to the start of this element's children.
+            </summary>
+            <param name="child">node to add. Must not already have a parent.</param>
+            <returns>this element, so that you can add more child nodes or elements.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.AppendElement(System.String)">
+            <summary>
+            Create a new element by tag name, and add it as the last child.
+            </summary>
+            <param name="tagName">the name of the tag (e.g. <code>div</code>).</param>
+            <returns>the new element, to allow you to add content to it, e.g.:
+            <code>parent.AppendElement("h1").Attr("id", "header").Text("Welcome");</code>
+            </returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.PrependElement(System.String)">
+            <summary>
+            Create a new element by tag name, and add it as the first child.
+            </summary>
+            <param name="tagName">the name of the tag (e.g. <code>div</code>).</param>
+            <returns>
+            the new element, to allow you to add content to it, e.g.: 
+            <code>parent.PrependElement("h1").Attr("id", "header").Text("Welcome");</code>
+            </returns>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Element.AppendText(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Nodes.Element.PrependText(System.String)">
+            <summary>
+            Create and prepend a new TextNode to this element.
+            </summary>
+            <param name="text">the unencoded text to add</param>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Append(System.String)">
+            <summary>
+            Add inner HTML to this element. The supplied HTML will be parsed, and each node appended to the end of the children.
+            </summary>
+            <param name="html">HTML to add inside this element, after the existing HTML</param>
+            <returns>this element</returns>
+            <see cref="M:NSoup.Nodes.Element.Html(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Prepend(System.String)">
+            <summary>
+            Add inner HTML into this element. The supplied HTML will be parsed, and each node prepended to the start of the children.
+            </summary>
+            <param name="html">HTML to add inside this element, before the existing HTML</param>
+            <returns>this element</returns>
+            <see cref="M:NSoup.Nodes.Element.Html(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Before(System.String)">
+            <summary>
+            Insert the specified HTML into the DOM before this element (as a preceding sibling).
+            </summary>
+            <param name="html">HTML to add before this element</param>
+            <returns>this element, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.After(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Before(NSoup.Nodes.Node)">
+            <summary>
+            Insert the specified node into the DOM before this node (as a preceding sibling). 
+            </summary>
+            <param name="node">node to add before this element</param>
+            <returns>this Element, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Element.After(NSoup.Nodes.Node)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.After(System.String)">
+            <summary>
+            Insert the specified HTML into the DOM after this element (as a following sibling).
+            </summary>
+            <param name="html">HTML to add after this element</param>
+            <returns>this element, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Before(System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.After(NSoup.Nodes.Node)">
+            <summary>
+            Insert the specified node into the DOM after this node (as a following sibling).
+            </summary>
+            <param name="node">node to add after this element</param>
+            <returns>this element, for chaining</returns>
+            <see cref="M:NSoup.Nodes.Element.Before(NSoup.Nodes.Node)"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Empty">
+            <summary>
+            Remove all of the element's child nodes. Any attributes are left as-is.
+            </summary>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Wrap(System.String)">
+            <summary>
+            Wrap the supplied HTML around this element.
+            </summary>
+            <param name="html">HTML to wrap around this element, e.g. <code>&lt;div class="head"&gt;&lt;/div&gt;</code>. Can be arbitralily deep.</param>
+            <returns>this element, for chaining.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByTag(System.String)">
+            <summary>
+            Finds elements, including and recursively under this element, with the specified tag name.
+            </summary>
+            <param name="tagName">The tag name to search for (case insensitively).</param>
+            <returns>a matching unmodifiable list of elements. Will be empty if this element and none of its children match.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementById(System.String)">
+            <summary>
+            Find an element by ID, including or under this element.
+            </summary>
+            <param name="id">The ID to search for.</param>
+            <returns>The first matching element by ID, starting with this element, or null if none found.</returns>
+            <remarks>
+            Note that this finds the first matching ID, starting with this element. If you search down from a different 
+            starting point, it is possible to find a different element by ID. For unique element by ID within a Document, 
+            use <seealso cref="!:Document.GetElementById(string)"/>
+            </remarks>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Element.GetElementsByClass(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttribute(System.String)">
+            <summary>
+            Find elements that have a named attribute set. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute, e.g. <code>href</code></param>
+            <returns>elements that have this attribute, empty if none</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeStarting(System.String)">
+            <summary>
+            Find elements that have an attribute name starting with the supplied prefix. Use <code>data-</code> to find elements 
+            that have HTML5 datasets. 
+            </summary>
+            <param name="keyPrefix">name prefix of the attribute e.g. <code>data-</code></param>
+            <returns>elements that have attribute names that start with with the prefix, empty if none.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValue(System.String,System.String)">
+            <summary>
+            Find elements that have an attribute with the specific value. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="value">value of the attribute</param>
+            <returns>elements that have this attribute with this value, empty if none</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueNot(System.String,System.String)">
+            <summary>
+            Find elements that either do not have this attribute, or have it with a different value. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="value">value of the attribute</param>
+            <returns>elements that do not have a matching attribute</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueStarting(System.String,System.String)">
+            <summary>
+            Find elements that have attributes that start with the value prefix. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="valuePrefix">start of attribute value</param>
+            <returns>elements that have attributes that start with the value prefix</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueEnding(System.String,System.String)">
+            <summary>
+            Find elements that have attributes that end with the value suffix. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="valueSuffix">end of the attribute value</param>
+            <returns>elements that have attributes that end with the value suffix</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueContaining(System.String,System.String)">
+            <summary>
+            Find elements that have attributes whose value contains the match string. Case insensitive.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="match">substring of value to search for</param>
+            <returns>elements that have attributes containing this text</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueMatching(System.String,System.Text.RegularExpressions.Regex)">
+            <summary>
+            Find elements that have attributes whose values match the supplied regular expression.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="pattern">regular expression to match against attribute values</param>
+            <returns>elements that have attributes matching this regular expression</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByAttributeValueMatching(System.String,System.String)">
+            <summary>
+            Find elements that have attributes whose values match the supplied regular expression.
+            </summary>
+            <param name="key">name of the attribute</param>
+            <param name="regex">regular expression to match against attribute values.</param>
+            <returns>elements that have attributes matching this regular expression</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByIndexLessThan(System.Int32)">
+            <summary>
+            Find elements whose sibling index is less than the supplied index.
+            </summary>
+            <param name="index">0-based index</param>
+            <returns>elements less than index</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByIndexGreaterThan(System.Int32)">
+            <summary>
+            Find elements whose sibling index is greater than the supplied index.
+            </summary>
+            <param name="index">0-based index</param>
+            <returns>elements greater than index</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsByIndexEquals(System.Int32)">
+            <summary>
+            Find elements whose sibling index is equal to the supplied index.
+            </summary>
+            <param name="index">0-based index</param>
+            <returns>elements equal to index</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsContainingText(System.String)">
+            <summary>
+            Find elements that contain the specified string. The search is case insensitive. The text may appear directly 
+            in the element, or in any of its descendants.
+            </summary>
+            <param name="searchText">to look for in the element's text</param>
+            <returns>elements that contain the string, case insensitive.</returns>
+            <see cref="M:NSoup.Nodes.Element.Text"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsContainingOwnText(System.String)">
+            <summary>
+            Find elements that directly contain the specified string. The search is case insensitive. The text must appear directly 
+            in the element, not in any of its descendants.
+            </summary>
+            <param name="searchText">to look for in the element's own text</param>
+            <returns>elements that contain the string, case insensitive.</returns>
+            <see cref="M:NSoup.Nodes.Element.OwnText"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsMatchingText(System.Text.RegularExpressions.Regex)">
+            <summary>
+            Find elements whose text matches the supplied regular expression.
+            </summary>
+            <param name="pattern">regular expression to match text against</param>
+            <returns>elements matching the supplied regular expression.</returns>
+            <see cref="M:NSoup.Nodes.Element.Text"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsMatchingText(System.String)">
+            <summary>
+            Find elements whose text matches the supplied regular expression.
+            </summary>
+            <param name="regex">regular expression to match text against.</param>
+            <returns>elements matching the supplied regular expression.</returns>
+            <see cref="M:NSoup.Nodes.Element.Text"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsMatchingOwnText(System.Text.RegularExpressions.Regex)">
+            <summary>
+            Find elements whose own text matches the supplied regular expression.
+            </summary>
+            <param name="pattern">regular expression to match text against</param>
+            <returns>elements matching the supplied regular expression.</returns>
+            <see cref="M:NSoup.Nodes.Element.OwnText"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetElementsMatchingOwnText(System.String)">
+            <summary>
+            Find elements whose text matches the supplied regular expression.
+            </summary>
+            <param name="regex">regular expression to match text against. You can use <a href="http://java.sun.com/docs/books/tutorial/essential/regex/pattern.html#embedded">embedded flags</a> (such as (?i) and (?m) to control regex options.</param>
+            <returns>elements matching the supplied regular expression.</returns>
+            <see cref="M:NSoup.Nodes.Element.OwnText"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.GetAllElements">
+            <summary>
+            Find all elements under this element (including self, and children of children).
+            </summary>
+            <returns>all elements</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Text">
+            <summary>
+            Gets the combined text of this element and all its children.
+            For example, given HTML <code><p>Hello <b>there</b> now!</p></code>, <code>p.Text()</code> returns <code>"Hello there now!"</code>
+            </summary>
+            <returns>Unencoded text, or empty string if none.</returns>
+            <see cref="M:NSoup.Nodes.Element.OwnText"/>
+            <see cref="P:NSoup.Nodes.Element.TextNodes"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Text(System.String)">
+            <summary>
+            Set the text of this element. Any existing contents (text or elements) will be cleared
+            </summary>
+            <param name="text">Unencoded text</param>
+            <returns>This element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Text(System.Text.StringBuilder)">
+            <summary> 
+            </summary>
+            <param name="accum"></param>
+        </member>
+        <member name="M:NSoup.Nodes.Element.OwnText">
+            <summary>
+            Gets the text owned by this element only; does not get the combined text of all children.
+            For example, given HTML <code>&lt;p&gt;Hello &lt;b&gt;there&lt;/b&gt; now!&lt;/p&gt;</code>, <code>p.OwnText()</code> returns <code>"Hello now!"</code>,
+            whereas <code>p.Text()</code> returns <code>"Hello there now!"</code>.
+            Note that the text within the <code>b</code> element is not returned, as it is not a direct child of the <code>p</code> element.
+            </summary>
+            <returns>unencoded text, or empty string if none.</returns>
+            <see cref="M:NSoup.Nodes.Element.Text"/>
+            <see cref="P:NSoup.Nodes.Element.TextNodes"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.ClassName">
+            <summary>
+            Gets the literal value of this element's "class" attribute, which may include multiple class names, space 
+            separated. (E.g. on <code>&lt;div class="header gray"&gt;</code> returns, "<code>header gray</code>")
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Element.ClassNames">
+            <summary>
+            Gets all of the element's class names. E.g. on element <code>&lt;div class="header gray"}&gt;</code>, 
+            returns a set of two elements <code>"header", "gray"</code>. Note that modifications to this set are not pushed to 
+            the backing <code>class</code> attribute; use the <seealso cref="!:ClassNames(HashSet)"/> method to persist them. 
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Element.ClassNames(System.Collections.Generic.HashSet{System.String})">
+            <summary>
+            Set the element's <code>class</code> attribute to the supplied class names.
+            </summary>
+            <param name="classNames">set of classes</param>
+            <returns>this element, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.HasClass(System.String)">
+            <summary>
+            Tests if this element has a class. Case insensitive.
+            </summary>
+            <param name="className">name of class to check for</param>
+            <returns>true if it does, false if not</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.AddClass(System.String)">
+            <summary>
+            Add a class name to this element's <code>class</code> attribute.
+            </summary>
+            <param name="className">class name to add</param>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.RemoveClass(System.String)">
+            <summary>
+            Remove a class name from this element's <code>class</code> attribute.
+            </summary>
+            <param name="className">class name to remove</param>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.ToggleClass(System.String)">
+            <summary>
+            Toggle a class name on this element's <code>class</code> attribute: if present, remove it; otherwise add it.
+            </summary>
+            <param name="className">class name to toggle</param>
+            <returns>this element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Val">
+            <summary>
+            Get the value of a form element (input, textarea, etc).
+            </summary>
+            <returns>the value of the form element, or empty string if not set.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Val(System.String)">
+            <summary>
+            Set the value of a form element (input, textarea, etc).
+            </summary>
+            <param name="value">value to set</param>
+            <returns>this element (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Html">
+            <summary>
+            Retrieves the element's inner HTML. E.g. on a <code>&lt;div&gt;</code> with one empty <code>&lt;p&gt;</code>, would return 
+            <code>&lt;p&gt;&lt;/p&gt;</code>. (Whereas {@link #outerHtml()} would return <code>&lt;div&gt;&lt;p&gt;&lt;/p&gt;&lt;/div&gt;</code>.)
+            </summary>
+            <returns>string of HTML.</returns>
+            <seealso cref="!:OuterHtml()"/>
+        </member>
+        <member name="M:NSoup.Nodes.Element.Html(System.String)">
+            <summary>
+            Set this element's inner HTML. Clears the existing HTML first.
+            </summary>
+            <param name="html">HTML to parse and set into this element</param>
+            <returns>this element</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Append(System.String)"/>
+        </member>
+        <member name="P:NSoup.Nodes.Element.NodeName">
+            <summary>
+            Gets the node's name.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.Tag">
+            <summary>
+            Gets the Tag for this element.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.IsBlock">
+            <summary>
+            Test if this element is a block-level element. (E.g. <code>&lt;div&gt; == true</code> or an inline element <code>&lt;p&gt; == false</code>).
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.Id">
+            <summary>
+            Gets the <code>id</code> attribute of this element.
+            </summary>
+        </member>
+        <!-- 对于成员“P:NSoup.Nodes.Element.Dataset”忽略有格式错误的 XML 注释 -->
+        <member name="P:NSoup.Nodes.Element.Parent">
+            <summary>
+            Gets the parent element.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.Parents">
+            <summary>
+            Gets this element's parent and ancestors, up to the document root.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.Children">
+            <summary>
+            Gets this element's child elements.
+            </summary>
+            <remarks>
+            This is effectively a filter on {@link #childNodes()} to get Element nodes.
+            If this element has no children, returns an empty list.
+            </remarks>
+            <see cref="!:ChildNodes()"/>
+        </member>
+        <!-- 对于成员“P:NSoup.Nodes.Element.TextNodes”忽略有格式错误的 XML 注释 -->
+        <member name="P:NSoup.Nodes.Element.DataNodes">
+            <summary>
+            Gets this element's child data nodes. The list is unmodifiable but the data nodes may be manipulated.
+            This is effectively a filter on ChildNodes to get Data nodes.
+            </summary>
+            <seealso cref="P:NSoup.Nodes.Element.Data"/>
+        </member>
+        <member name="P:NSoup.Nodes.Element.SiblingElements">
+            <summary>
+            Gets sibling elements. If the element has no sibling elements, returns an empty list. An element is not a sibling
+            of itself, so will not be included in the returned list.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.NextElementSibling">
+            <summary>
+            Gets the next sibling element of this element. E.g., if a <code>div</code> contains two <code>p</code>s, 
+            the <code>NextElementSibling</code> of the first <code>p</code> is the second <code>p</code>.
+            </summary>
+            <remarks>
+            This is similar to {@link #nextSibling()}, but specifically finds only Elements.
+            </remarks>
+            <see cref="P:NSoup.Nodes.Element.PreviousElementSibling"/>
+        </member>
+        <member name="P:NSoup.Nodes.Element.PreviousElementSibling">
+            <summary>
+            Gets the previous element sibling of this element.
+            </summary>
+            <see cref="P:NSoup.Nodes.Element.NextElementSibling"/>
+        </member>
+        <member name="P:NSoup.Nodes.Element.FirstElementSibling">
+            <summary>
+            Gets the first element sibling of this element.
+            Will return the first sibling that is an element (aka the parent's first element child).
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.ElementSiblingIndex">
+            <summary>
+            Gets the list index of this element in its element sibling list. I.e. if this is the first element 
+            sibling, returns 0.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.LastElementSibling">
+            <summary>
+            Gets the last element sibling of this element.
+            Will return the last sibling that is an element (aka the parent's last element child).
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.PreserveWhitespace">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.HasText">
+            <summary>
+            Test if this element has any text content (that is not just whitespace).
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Element.Data">
+            <summary>
+            Gets the combined data of this element. Data is e.g. the inside of a <code>script</code> tag.
+            </summary>
+            <see cref="P:NSoup.Nodes.Element.DataNodes"/>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Document.#ctor(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Nodes.Document.CreateShell(System.String)">
+            <summary>
+            Create a valid, empty shell of a document, suitable for adding more elements to.
+            </summary>
+            <param name="baseUri">baseUri of document</param>
+            <returns>document with html, head, and body elements.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Document.OutputSettings">
+            <summary>
+            Gets the document's output settings.
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Document.OutputSettings(NSoup.Nodes.OutputSettings)">
+            <summary>
+            Sets the document's output settings.
+            </summary>
+            <param name="outputSettings">New output settings</param>
+            <returns>This document, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Document.CreateElement(System.String)">
+            <summary>
+            Create a new Element, with this document's base uri. Does not make the new element a child of this document.
+            </summary>
+            <param name="tagName">element tag name (e.g. <code>a</code>)</param>
+            <returns>new Element</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Document.Normalise">
+            <summary>
+            Normalise the document. This happens after the parse phase so generally does not need to be called.
+            Moves any text content that is not in the body element into the body.
+            </summary>
+            <returns>this document after normalisation</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Document.Text(System.String)">
+            <summary>
+            Set the text of the <code>body</code> of this document. Any existing nodes within the body will be cleared.
+            </summary>
+            <param name="text">unencoded text</param>
+            <returns>this document</returns>
+        </member>
+        <member name="P:NSoup.Nodes.Document.Head">
+            <summary>
+            Gets the document's <code>head</code> element.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Document.Body">
+            <summary>
+            Gets the document's <code>body</code> element.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Document.Title">
+            <summary>
+            Gets or sets the string contents of the document's {@code title} element.
+            On set, updates the existing element, or adds {@code title} to {@code head} if
+            not present.
+            </summary>
+        </member>
+        <member name="P:NSoup.Nodes.Document.NodeName">
+            <summary>
+            Gets the node's name.
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.OutputSettings">
+            <summary>
+            A Document's output settings control the form of the Text() and H   tml() methods.
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.SetEscapeMode(NSoup.Nodes.Entities.EscapeMode)">
+            <summary>
+            Set the document's escape mode
+            </summary>
+            <param name="escapeMode">the new escape mode to use</param>
+            <returns>the document's output settings, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.SetEncoding(System.Text.Encoding)">
+            <summary>
+            Update the document's output charset.
+            </summary>
+            <param name="encoding">the new encoding to use.</param>
+            <returns>the document's output settings, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.SetEncoding(System.String)">
+            <summary>
+            Update the document's output charset.
+            </summary>
+            <param name="encoding">the new charset (by name) to use.</param>
+            <returns>the document's output settings, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.PrettyPrint">
+            <summary>
+            Get if pretty printing is enabled. Default is true. If disabled, the HTML output methods will not re-format 
+            the output, and the output will generally look like the input.
+            </summary>
+            <returns>if pretty printing is enabled.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.PrettyPrint(System.Boolean)">
+            <summary>
+            Enable or disable pretty printing.
+            </summary>
+            <param name="pretty">new pretty print setting</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.IndentAmount">
+            <summary>
+            Get the current tag indent amount, used when pretty printing.
+            </summary>
+            <returns>the current indent amount</returns>
+        </member>
+        <member name="M:NSoup.Nodes.OutputSettings.IndentAmount(System.Int32)">
+            <summary>
+            Set the indent amount for pretty printing
+            </summary>
+            <param name="indentAmount">number of spaces to use for indenting each level. Must be >= 0.</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <!-- 对于成员“P:NSoup.Nodes.OutputSettings.EscapeMode”忽略有格式错误的 XML 注释 -->
+        <!-- 对于成员“P:NSoup.Nodes.OutputSettings.Encoding”忽略有格式错误的 XML 注释 -->
+        <member name="T:NSoup.Nodes.DocumentType">
+            <summary>
+            A <code>&lt;!DOCTPYE&gt;</code> node.
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.DocumentType.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Create a new doctype element.
+            </summary>
+            <param name="name">the doctype's name</param>
+            <param name="publicId">the doctype's public ID</param>
+            <param name="systemId">the doctype's system ID</param>
+            <param name="baseUri">the doctype's base URI</param>
+        </member>
+        <member name="T:NSoup.Nodes.Entities">
+            <summary>
+            HTML entities, and escape routines.
+            Source: <a href="http://www.w3.org/TR/html5/named-character-references.html#named-character-references">W3C HTML named character references</a>.
+            </summary>
+        </member>
+        <member name="M:NSoup.Nodes.Entities.IsNamedEntity(System.String)">
+            <summary>
+            Check if the input is a known named entity
+            </summary>
+            <param name="name">the possible entity name (e.g. "lt" or "amp")</param>
+            <returns>true if a known named entity</returns>
+        </member>
+        <member name="M:NSoup.Nodes.Entities.IsBaseNamedEntity(System.String)">
+            <summary>
+            Check if the input is a known named entity in the base entity set.
+            </summary>
+            <param name="name">The possible entity name (e.g. "lt" or "amp")</param>
+            <returns>True if a known named entity in the base set</returns>
+            <see cref="M:NSoup.Nodes.Entities.IsNamedEntity(System.String)"/>
+        </member>
+        <!-- 对于成员“M:NSoup.Nodes.Entities.GetCharacterByName(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Nodes.Entities.Unescape(System.String,System.Boolean)">
+            <summary>
+            Unescape the input string.
+            </summary>
+            <param name="s"></param>
+            <param name="strict">if "strict" (that is, requires trailing ';' char, otherwise that's optional)</param>
+            <returns></returns>
+        </member>
+        <member name="T:NSoup.Parse.CharacterReader">
+            <summary>
+            CharacterReader consumes tokens off a string. To replace the old TokenQueue.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.CharacterReader.NextIndexOf(System.Char)">
+            <summary>
+            Returns the number of characters between the current position and the next instance of the input char
+            </summary>
+            <param name="c">Scan target</param>
+            <returns>Offset between current position and next instance of target. -1 if not found</returns>
+        </member>
+        <member name="M:NSoup.Parse.CharacterReader.NextIndexOf(System.String)">
+            <summary>
+            Returns the number of characters between the current position and the next instance of the input sequence
+            </summary>
+            <param name="seq">Scan target</param>
+            <returns>Offset between current position and next instance of target. -1 if not found.</returns>
+        </member>
+        <member name="T:NSoup.Parse.ParseError">
+            <summary>
+            A Parse Error records an error in the input HTML that occurs in either the tokenisation or the tree building phase.
+            </summary>
+        </member>
+        <member name="T:NSoup.Parse.ParseErrorList">
+            <summary>
+            A container for ParseErrors.
+            </summary>
+        </member>
+        <member name="T:NSoup.Parse.Token">
+            <summary>
+            Parse tokens for the Tokeniser.
+            </summary>
+        </member>
+        <member name="T:NSoup.Parse.Tokeniser">
+            <summary>
+            Readers the input stream into tokens.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.Tokeniser.UnescapeEntities(System.Boolean)">
+            <summary>
+            Utility method to consume reader and unescape entities found within.
+            </summary>
+            <param name="inAttribute"></param>
+            <returns>Unescaped string from reader</returns>
+        </member>
+        <member name="T:NSoup.Parse.TokeniserState">
+            States and Transition activations for the Tokeniser.
+        </member>
+        <member name="M:NSoup.Parse.TokeniserState.RcDataState.Read(NSoup.Parse.Tokeniser,NSoup.Parse.CharacterReader)">
+            handles data in title, textarea etc
+        </member>
+        <member name="T:NSoup.Parse.HtmlTreeBuilder">
+            <summary>
+            HTML Tree Builder; creates a DOM from Tokens.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.HtmlTreeBuilder.GenerateImpliedEndTags(System.String)">
+            <summary>
+            11.2.5.2 Closing elements that have implied end tags
+            When the steps below require the UA to generate implied end tags, then, while the current node is a dd element, a 
+            dt element, an li element, an option element, an optgroup element, a p element, an rp element, or an rt element, 
+            the UA must pop the current node off the stack of open elements.
+            </summary>
+            <param name="excludeTag">If a step requires the UA to generate implied end tags but lists an element to exclude from the process, then the UA must perform the above steps as if that element was not in the above list.</param>
+        </member>
+        <member name="T:NSoup.Parse.HtmlTreeBuilderState">
+            <summary>
+            The Tree Builder's current state. Each state embodies the processing for the state, and transitions to other states.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.XmlTreeBuilder.PopStackToClose(NSoup.Parse.Token.EndTag)">
+             If the stack contains an element with this tag's name, pop up the stack to remove the first occurrence. If not
+             found, skips.
+            
+             @param endTag
+        </member>
+        <member name="T:NSoup.Select.Evaluator">
+            <summary>
+            Evaluates that an element matches the selector.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Select.Evaluator.Matches(NSoup.Nodes.Element,NSoup.Nodes.Element)">
+            <summary>
+            Test if the element meets the evaluator's requirements.
+            </summary>
+            <param name="root">Root of the matching subtree</param>
+            <param name="element">tested element</param>
+            <returns></returns>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.Tag">
+            <summary>
+            Evaluator for tag name
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.Id">
+            <summary>
+            Evaluator for element id
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.Class">
+            <summary>
+            Evaluator for element class
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.Attribute">
+            <summary>
+            Evaluator for attribute name matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeStarting">
+            <summary>
+            Evaluator for attribute name prefix matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValue">
+            <summary>
+            Evaluator for attribute name/value matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeKeyPair">
+            <summary>
+            Abstract evaluator for attribute name/value matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValueNot">
+            <summary>
+            Evaluator for attribute name != value matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValueStarting">
+            <summary>
+            Evaluator for attribute name/value matching (value prefix)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValueEnding">
+            <summary>
+            Evaluator for attribute name/value matching (value ending)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValueContaining">
+            <summary>
+            Evaluator for attribute name/value matching (value containing)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AttributeWithValueMatching">
+            <summary>
+            Evaluator for attribute name/value matching (value regex matching)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.AllElements">
+            <summary>
+            Evaluator for any / all element matching
+            </summary>
+        </member>
+        <!-- 对于成员“T:NSoup.Select.Evaluator.IndexLessThan”忽略有格式错误的 XML 注释 -->
+        <member name="T:NSoup.Select.Evaluator.IndexEvaluator">
+            <summary>
+            Abstract evaluator for sibling index matching
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.IndexGreaterThan">
+            <summary>
+            Evaluator for matching by sibling index number (e > idx)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.IndexEquals">
+            <summary>
+            Evaluator for matching by sibling index number (e = idx)
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.ContainsText">
+            <summary>
+            Evaluator for matching Element (and its descendants) text
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.ContainsOwnText">
+            <summary>
+            Evaluator for matching Element's own text
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.MatchesRegex">
+            <summary>
+            Evaluator for matching Element (and its descendants) text with regex
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Evaluator.MatchesOwn">
+            <summary>
+            Evaluator for matching Element's own text with regex
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.TextNode">
+            <summary>
+            A text node.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.#ctor(System.String,System.String)">
+            <summary>
+            Create a new TextNode representing the supplied (unencoded) text).
+            </summary>
+            <param name="text">raw text</param>
+            <param name="baseUri">base uri</param>
+            <seealso cref="M:NSoup.Nodes.TextNode.CreateFromEncoded(System.String,System.String)"/>
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.Text">
+            <summary>
+            Get the unencoded, normalised text content of this text node.
+            </summary>
+            <seealso cref="M:NSoup.Nodes.TextNode.GetWholeText"/>
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.Text(System.String)">
+            <summary>
+            Set the text content of this text node.
+            </summary>
+            <param name="text">unencoded text</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.GetWholeText">
+            <summary>
+            Get the (unencoded) text of this text node, including any newlines and spaces present in the original.
+            </summary>
+            <returns>text</returns>
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.SplitText(System.Int32)">
+            <summary>
+            Split this text node into two nodes at the specified string offset. After splitting, this node will contain the 
+            original text up to the offset, and will have a new text node sibling containing the text after the offset.
+            </summary>
+            <param name="offset">string offset point to split node at.</param>
+            <returns>the newly created text node containing the text after the offset.</returns>
+        </member>
+        <member name="M:NSoup.Nodes.TextNode.CreateFromEncoded(System.String,System.String)">
+            <summary>
+            Create a new TextNode from HTML encoded (aka escaped) data.
+            </summary>
+            <param name="encodedText">Text containing encoded HTML (e.g. &amp;lt;)</param>
+            <param name="baseUri"></param>
+            <returns>TextNode containing unencoded data (e.g. &lt;)</returns>
+        </member>
+        <member name="P:NSoup.Nodes.TextNode.IsBlank">
+            <summary>
+            Test if this text node is blank -- that is, empty or only whitespace (including newlines).
+            </summary>
+        </member>
+        <member name="T:NSoup.Nodes.XmlDeclaration">
+            <summary>
+            An XML Declaration.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Nodes.XmlDeclaration.#ctor(System.String,System.String,System.Boolean)">
+            <summary>
+            Create a new XML declaration
+            </summary>
+            <param name="data">data</param>
+            <param name="baseUri">base uri</param>
+            <param name="isProcessingInstruction">is processing instruction</param>
+        </member>
+        <member name="M:NSoup.Nodes.XmlDeclaration.GetWholeDeclaration">
+            <summary>
+            Get the unencoded XML declaration.
+            </summary>
+            <returns>XML declaration</returns>
+        </member>
+        <member name="P:NSoup.Nodes.XmlDeclaration.NodeName">
+            <summary>
+            Gets the node's name.
+            </summary>
+        </member>
+        <member name="T:NSoup.NSoupClient">
+            <summary>
+            The core public access point to the NSoup functionality.
+            </summary>
+            <!--
+            Changed to NSoupClient due to namespace collisions.
+            
+            Original Author: Jonathan Hedley
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.String,System.String)">
+            <summary>
+            Parse HTML into a Document. The parser will make a sensible, balanced document tree out of any HTML.
+            </summary>
+            <param name="html">HTML to parse</param>
+            <param name="baseUri">The URL where the HTML was retrieved from. Used to resolve relative URLs to absolute URLs, that occur 
+            before the HTML declares a <code>&lt;base href&gt;</code> tag.</param>
+            <returns>sane HTML</returns>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.String,System.String,NSoup.Parse.Parser)">
+            <summary>
+            Parse HTML into a Document, using the provided Parser. You can provide an alternate parser, such as a simple XML
+            (non-HTML) parser.
+            </summary>
+            <param name="html">HTML to parse.</param>
+            <param name="baseUri">The URL where the HTML was retrieved from. Used to resolve relative URLs to absolute URLs, that occur before the HTML declares a &lt;base href&gt; tag.</param>
+            <param name="parser">Alternate parser to use.</param>
+            <returns>Sane HTML.</returns>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.String)">
+            <summary>
+            Parse HTML into a Document. As no base URI is specified, absolute URL detection relies on the HTML including a 
+            <code>&lt;base href&gt;</code> tag.
+            </summary>
+            <param name="html">HTML to parse</param>
+            <returns>Sane HTML</returns>
+            <seealso cref="M:NSoup.NSoupClient.Parse(System.String,System.String)"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.Connect(System.String)">
+            <summary>
+            Creates a new IConnection to a URL. Use to fetch and parse a HTML page.
+            Use examples:
+            <ul>
+            <li><code>Document doc = NSoupClient.Connect("http://example.com").UserAgent("Mozilla").Data("name", "jsoup").Get();</code></li>
+            <li><code>Document doc = NSoupClient.Connect("http://example.com").Cookie("auth", "token").Post();</code></li>
+            </ul>
+            </summary>
+            <param name="url">URL to connect to. The protocol must be <code>http</code> or <code>https</code>.</param>
+            <returns>the connection. You can add data, cookies, and headers; set the user-agent, referrer, method; and then execute.</returns>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.IO.Stream,System.String,System.String)">
+            <summary>
+            Parse the contents of a file as HTML.
+            </summary>
+            <param name="filename">stream to load HTML from</param>
+            <param name="charsetName">(optional) character set of file contents. Set to <code>null</code> to determine from <code>http-equiv</code> meta tag, if 
+            present, or fall back to <code>UTF-8</code> (which is often safe to do).</param> 
+            <param name="baseUri">The URL where the HTML was retrieved from, to resolve relative links against.</param>
+            <returns>sane HTML</returns>
+            <remarks>Throws an exception if the file could not be found, or read, or if the charsetName is invalid.</remarks>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.IO.Stream,System.String)">
+            <summary>
+            Parse the contents of a stream as HTML.
+            </summary>
+            <param name="filename">stream to load HTML from</param>
+            <param name="charsetName">(optional) character set of file contents. Set to <code>null</code> to determine from <code>http-equiv</code> meta tag, if 
+            present, or fall back to <code>UTF-8</code> (which is often safe to do).</param> 
+            <returns>sane HTML</returns>
+            <remarks>Throws an exception if the stream could not be read, or if the charsetName is invalid.</remarks>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.IO.FileStream,System.String)">
+            <summary>
+            Parse the contents of a file as HTML. The location of the file is used as the base URI to qualify relative URLs.    
+            </summary>
+            <param name="filename">file to load HTML from</param>
+            <param name="charsetName">(optional) character set of file contents. Set to null to determine from http-equiv meta tag, if 
+            present, or fall back to <code>UTF-8</code> (which is often safe to do).</param>
+            <returns>sane HTML</returns>
+            <remarks>if the file could not be found, or read, or if the charsetName is invalid.</remarks>
+            <seealso cref="!:parse(string, string, string)"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.IO.Stream,System.String,System.String,NSoup.Parse.Parser)">
+            <summary>
+            Read an input stream, and parse it to a Document. You can provide an alternate parser, such as a simple XML
+            (non-HTML) parser.
+            </summary>
+            <param name="input">Input stream to read. Make sure to close it after parsing.</param>
+            <param name="charsetName">(Optional) Character set of file contents. Set to null to determine from http-equiv meta tag, if
+            present, or fall back to UTF-8 (which is often safe to do).</param>
+            <param name="baseUri">The URL where the HTML was retrieved from, to resolve relative links against.</param>
+            <param name="parser">Alternate parser to use.</param>
+            <returns>Sane HTML</returns>
+            <exception cref="T:System.IO.IOException">If the file could not be found, or read, or if the charsetName is invalid.</exception>
+        </member>
+        <member name="M:NSoup.NSoupClient.ParseBodyFragment(System.String,System.String)">
+            <summary>
+            Parse a fragment of HTML, with the assumption that it forms the {@code body} of the HTML.
+            </summary>
+            <param name="bodyHtml">body HTML fragment</param>
+            <param name="baseUri">URL to resolve relative URLs against.</param>
+            <returns>sane HTML document</returns>
+            <seealso cref="P:NSoup.Nodes.Document.Body"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.ParseBodyFragment(System.String)">
+            <summary>
+            Parse a fragment of HTML, with the assumption that it forms the <code>body</code> of the HTML.
+            </summary>
+            <param name="bodyHtml">body HTML fragment</param>
+            <returns>sane HTML document</returns>
+            <seealso cref="P:NSoup.Nodes.Document.Body"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.Parse(System.Uri,System.Int32)">
+            <summary>
+            Fetch a URL, and parse it as HTML. Provided for compatibility; in most cases use <code>Connect(string)</code> instead.
+            The encoding character set is determined by the content-type header or http-equiv meta tag, or falls back to <code>UTF-8</code>.
+            </summary>
+            <param name="url">URL to fetch (with a GET). The protocol must be <code>http</code> or <code>https</code>.</param>
+            <param name="timeoutMillis">Connection and read timeout, in milliseconds. If exceeded, IOException is thrown.</param>
+            <returns>The parsed HTML.</returns>
+            <seealso cref="M:NSoup.NSoupClient.Connect(System.String)"/>
+            <exception cref="T:NSoup.HttpStatusException">If the response is not OK and HTTP response errors are not ignored.</exception>
+            <exception cref="T:NSoup.UnsupportedMimeTypeException">If the response mime type is not supported and those errors are not ignored.</exception>
+            <exception cref="T:System.IO.IOException">If a connection or read error occurs.</exception>
+        </member>
+        <member name="M:NSoup.NSoupClient.Clean(System.String,System.String,NSoup.Safety.Whitelist)">
+            <summary>
+            Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted 
+            tags and attributes.
+            </summary>
+            <param name="bodyHtml">Input untrusted HTML (body fragment)</param>
+            <param name="baseUri">URL to resolve relative URLs against</param>
+            <param name="whitelist">White-list of permitted HTML elements</param>
+            <returns>Safe HTML (body fragment)</returns>
+            <seealso cref="M:NSoup.Safety.Cleaner.Clean(NSoup.Nodes.Document)"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.Clean(System.String,NSoup.Safety.Whitelist)">
+            <summary>
+            Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of permitted 
+            tags and attributes.
+            </summary>
+            <param name="bodyHtml">Input untrusted HTML (body fragment)</param>
+            <param name="whitelist">White-list of permitted HTML elements</param>
+            <returns>Safe HTML (body fragment)</returns>
+            <seealso cref="M:NSoup.Safety.Cleaner.Clean(NSoup.Nodes.Document)"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.Clean(System.String,System.String,NSoup.Safety.Whitelist,NSoup.Nodes.OutputSettings)">
+            <summary>
+            Get safe HTML from untrusted input HTML, by parsing input HTML and filtering it through a white-list of
+            permitted tags and attributes.
+            </summary>
+            <param name="bodyHtml">Input untrusted HTML (body fragment)</param>
+            <param name="baseUri">URL to resolve relative URLs against</param>
+            <param name="whitelist">White-list of permitted HTML elements</param>
+            <param name="outputSettings">Document output settings; use to control pretty-printing and entity escape modes</param>
+            <returns>Safe HTML (body fragment)</returns>
+            <see cref="M:NSoup.Safety.Cleaner.Clean(NSoup.Nodes.Document)"/>
+        </member>
+        <member name="M:NSoup.NSoupClient.IsValid(System.String,NSoup.Safety.Whitelist)">
+            <summary>
+            Test if the input HTML has only tags and attributes allowed by the Whitelist. Useful for form validation. The input HTML should 
+            still be run through the cleaner to set up enforced attributes, and to tidy the output.
+            </summary>
+            <param name="bodyHtml">HTML to test</param>
+            <param name="whitelist">whitelist to test against</param>
+            <returns>true if no tags or attributes were removed; false otherwise</returns>
+            <seealso cref="M:NSoup.NSoupClient.Clean(System.String,NSoup.Safety.Whitelist)"/>
+        </member>
+        <member name="T:NSoup.Parse.Parser">
+            <summary>
+            Parses HTML into a <see cref="T:NSoup.Nodes.Document"/>. Generally best to use one of the  more convenient parse methods in <see cref="T:NSoup.NSoupClient"/>.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Parse.Parser.#ctor(NSoup.Parse.TreeBuilder)">
+            <summary>
+            Create a new Parser, using the specified TreeBuilder
+            </summary>
+            <param name="treeBuilder">TreeBuilder to use to parse input into Documents.</param>
+        </member>
+        <member name="M:NSoup.Parse.Parser.TreeBuilder">
+            <summary>
+            Gets the TreeBuilder currently in use.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.Parser.TreeBuilder(NSoup.Parse.TreeBuilder)">
+            <summary>
+            Update the TreeBuilder used when parsing content.
+            </summary>
+            <param name="treeBuilder">Current TreeBuilder</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.SetTrackErrors(System.Int32)">
+            <summary>
+            Enable or disable parse error tracking for the next parse.
+            </summary>
+            <param name="maxErrors">The maximum number of errors to track. Set to 0 to disable.</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.GetErrors">
+            <summary>
+            Retrieve the parse errors, if any, from the last parse.
+            </summary>
+            <returns>List of parse errors, up to the size of the maximum errors tracked.</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.Parse(System.String,System.String)">
+            <summary>
+            Parse HTML into a Document. 
+            </summary>
+            <param name="html">HTML to parse</param>
+            <param name="baseUri">base URI of document (i.e. original fetch location), for resolving relative URLs.</param>
+            <returns>parsed Document</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.ParseFragment(System.String,NSoup.Nodes.Element,System.String)">
+            <summary>
+            Parse a fragment of HTML into a list of nodes. The context element, if supplied, supplies parsing context.
+            </summary>
+            <param name="fragmentHtml">the fragment of HTML to parse</param>
+            <param name="context">(optional) the element that this HTML fragment is being parsed for (i.e. for inner HTML). This provides stack context (for implicit element creation).</param>
+            <param name="baseUri">base URI of document (i.e. original fetch location), for resolving relative URLs.</param>
+            <returns>list of nodes parsed from the input HTML. Note that the context element, if supplied, is not modified.</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.ParseBodyFragment(System.String,System.String)">
+            <summary>
+            Parse a fragment of HTML into the <code>body</code> of a Document.
+            </summary>
+            <param name="bodyHtml">fragment of HTML</param>
+            <param name="baseUri">base URI of document (i.e. original fetch location), for resolving relative URLs.</param>
+            <returns>Document, with empty head, and HTML parsed into body</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.UnescapeEntities(System.String,System.Boolean)">
+            <summary>
+            Utility method to unescape HTML entities from a string
+            </summary>
+            <param name="s">HTML escaped string</param>
+            <param name="inAttribute">If the string is to be escaped in strict mode (as attributes are)</param>
+            <returns>An unescaped string</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.ParseBodyFragmentRelaxed(System.String,System.String)">
+            <summary>
+            </summary>
+            <param name="bodyHtml">HTML to parse</param>
+            <param name="baseUri">baseUri base URI of document (i.e. original fetch location), for resolving relative URLs.</param>
+            <returns>parsed Document</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.HtmlParser">
+            <summary>
+            Create a new HTML parser. This parser treats input as HTML5, and enforces the creation of a normalised document,
+            based on a knowledge of the semantics of the incoming tags.
+            </summary>
+            <returns>A new HTML parser.</returns>
+        </member>
+        <member name="M:NSoup.Parse.Parser.XmlParser">
+            <summary>
+            Create a new XML parser. This parser assumes no knowledge of the incoming tags and does not treat it as HTML,
+            rather creates a simple tree directly from the input.
+            </summary>
+            <returns>A new simple XML parser.</returns>
+        </member>
+        <member name="P:NSoup.Parse.Parser.IsTrackErrors">
+            <summary>
+            Check if parse error tracking is enabled.
+            </summary>
+        </member>
+        <member name="T:NSoup.Parse.Tag">
+            <summary>
+             HTML Tag capabilities.
+            </summary>
+            <!--
+            Original author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki, amirgrozki@gmail.com
+            -->
+        </member>
+        <member name="M:NSoup.Parse.Tag.ValueOf(System.String)">
+            <summary>
+            Gets a Tag by name. If not previously defined (unknown), returns a new generic tag, that can do anything.
+            </summary>
+            <remarks>
+            Pre-defined tags (P, DIV etc) will be ==, but unknown tags are not registered and will only .Equals().
+            </remarks>
+            <param name="tagName">Name of tag, e.g. "p". Case insensitive.</param>
+            <returns>The tag, either defined or new generic.</returns>
+        </member>
+        <member name="M:NSoup.Parse.Tag.IsKnownTag">
+            <summary>
+            Gets if this is a pre-defined tag, or was auto created on parsing.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.Tag.IsKnownTag(System.String)">
+            <summary>
+            Check if this tagname is a known tag.
+            </summary>
+            <param name="tagName">name of tag</param>
+            <returns>if known HTML tag</returns>
+        </member>
+        <member name="P:NSoup.Parse.Tag.IsBlock">
+            <summary>
+            Gets if this is a block tag.
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.FormatAsBlock">
+            <summary>
+            Gets if this tag should be formatted as a block (or as inline)
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.CanContainBlock">
+            <summary>
+            Gets if this tag can contain block tags.
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.IsInline">
+            <summary>
+            Gets if this tag is an inline tag.
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.IsData">
+            <summary>
+            Gets if this tag is a data only tag.
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.IsEmpty">
+            <summary>
+            Gets if this is an empty tag
+            </summary>
+        </member>
+        <member name="P:NSoup.Parse.Tag.IsSelfClosing">
+            <summary>
+            Gets if this tag is self closing.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:NSoup.Parse.Tag.PreserveWhitespace">
+            <summary>
+            Gets if this tag should preserve whitespace within child text nodes.
+            </summary>
+        </member>
+        <member name="T:NSoup.Parse.TokenQueue">
+            <summary>
+            A character queue with parsing helpers.   
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.#ctor(System.String)">
+            <summary>
+            Create a new TokenQueue.
+            </summary>
+            <param name="data">string of data to back queue.</param>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Peek">
+            <summary>
+            Retrieves but does not remove the first character from the queue.
+            </summary>
+            <returns>First character, or 0 if empty.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.AddFirst(System.Char)">
+            <summary>
+            Add a character to the start of the queue (will be the next character retrieved).
+            </summary>
+            <param name="c">character to add</param>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.AddFirst(System.String)">
+            <summary>
+            Add a string to the start of the queue.
+            </summary>
+            <param name="seq">string to add.</param>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Matches(System.String)">
+            <summary>
+            Tests if the next characters on the queue match the sequence. Case insensitive.
+            </summary>
+            <param name="seq">string to check queue for.</param>
+            <returns>true if the next characters match.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.MatchesCS(System.String)">
+            <summary>
+            Case sensitive match test.
+            </summary>
+            <param name="seq">string to case sensitively check for</param>
+            <returns>true if matched, false if not</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.MatchesAny(System.String[])">
+            <summary>
+            Tests if the next characters match any of the sequences. Case insensitive.
+            </summary>
+            <param name="seq">list of strings to case insensitively check for</param>
+            <returns>true of any matched, false if none did</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.MatchChomp(System.String)">
+            <summary>
+            Tests if the queue matches the sequence (as with match), and if they do, removes the matched string from the 
+            queue.
+            </summary>
+            <param name="seq">string to search for, and if found, remove from queue.</param>
+            <returns>true if found and removed, false if not found.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.MatchesWhitespace">
+            <summary>
+            Tests if queue starts with a whitespace character.
+            </summary>
+            <returns>if starts with whitespace</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.MatchesWord">
+            <summary>
+            Test if the queue matches a word character (letter or digit).
+            </summary>
+            <returns>if matches a word character</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Advance">
+            <summary>
+            Drops the next character off the queue.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Consume">
+            <summary>
+            Consume one character off queue.
+            </summary>
+            <returns>first character on queue.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Consume(System.String)">
+            <summary>
+            Consumes the supplied sequence of the queue. If the queue does not start with the supplied sequence, will 
+            throw an illegal state exception -- but you should be running match() against that condition.
+            </summary>
+            <remarks>Case insensitive.</remarks>
+            <param name="seq">sequence to remove from head of queue.</param>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeTo(System.String)">
+            <summary>
+            Pulls a string off the queue, up to but exclusive of the match sequence, or to the queue running out.
+            </summary>
+            <param name="seq">string to end on (and not include in return, but leave on queue). <b>Case sensitive.</b></param>
+            <returns>The matched data consumed from queue.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeToAny(System.String[])">
+            <summary>
+            Consumes to the first sequence provided, or to the end of the queue. Leaves the terminator on the queue.
+            </summary>
+            <param name="seq">any number of terminators to consume to. <b>Case insensitive.</b></param>
+            <returns>consumed string</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ChompTo(System.String)">
+            <summary>
+            Pulls a string off the queue (like consumeTo), and then pulls off the matched string (but does not return it).
+            </summary>
+            <remarks>
+            If the queue runs out of characters before finding the seq, will return as much as it can (and queue will go 
+            isEmpty() == true).
+            </remarks>
+            <param name="seq">string to match up to, and not include in return, and to pull off queue. <b>Case sensitive.</b></param>
+            <returns>Data matched from queue.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ChompBalanced(System.Char,System.Char)">
+            <summary>
+            Pulls a balanced string off the queue. E.g. if queue is "(one (two) three) four", (,) will return "one (two) three", 
+            and leave " four" on the queue. Unbalanced openers and closers can be escaped (with \). Those escapes will be left 
+            in the returned string, which is suitable for regexes (where we need to preserve the escape), but unsuitable for 
+            contains text strings; use unescape for that. 
+            </summary>
+            <param name="open">opener</param>
+            <param name="close">closer</param>
+            <returns>data matched from the queue</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Unescape(System.String)">
+            <summary>
+            Unescaped a \ escaped string.
+            </summary>
+            <param name="input">backslash escaped string</param>
+            <returns>unescaped string</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeWhitespace">
+            <summary>
+            Pulls the next run of whitespace characters of the queue.
+            </summary>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeWord">
+            <summary>
+            Retrieves the next run of word type (letter or digit) off the queue.
+            </summary>
+            <returns>string of word characters from queue, or empty string if none.</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeTagName">
+            <summary>
+            Consume an tag name off the queue (word or :, _, -)
+            </summary>
+            <returns>tag name</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeElementSelector">
+            <summary>
+            Consume a CSS element selector (tag name, but | instead of : for namespaces, to not conflict with :pseudo selects).
+            </summary>
+            <returns>tag name</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeCssIdentifier">
+            <summary>
+            onsume a CSS identifier (ID or class) off the queue (letter, digit, -, _)
+            http://www.w3.org/TR/CSS2/syndata.html#value-def-identifier     
+            </summary>
+            <returns>identifier</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.ConsumeAttributeKey">
+            <summary>
+            Consume an attribute key off the queue (letter, digit, -, _, :")
+            </summary>
+            <returns>attribute key</returns>
+        </member>
+        <member name="M:NSoup.Parse.TokenQueue.Remainder">
+            <summary>
+            Consume and return whatever is left on the queue.
+            </summary>
+            <returns>remained of queue.</returns>
+        </member>
+        <member name="P:NSoup.Parse.TokenQueue.IsEmpty">
+            <summary>
+            Is the queue empty?
+            </summary>
+        </member>
+        <member name="T:NSoup.Safety.Cleaner">
+            <summary>
+            The whitelist based HTML cleaner. Use to ensure that end-user provided HTML contains only the elements and attributes 
+            that you are expecting; no junk, and no cross-site scripting attacks!
+            </summary>
+            <remarks>
+            The HTML cleaner parses the input as HTML and then runs it through a white-list, so the output HTML can only contain 
+            HTML that is allowed by the whitelist.
+            It is assumed that the input HTML is a body fragment; the clean methods only pull from the source's body, and the 
+            canned white-lists only allow body contained tags.
+            Rather than interacting directly with a Cleaner object, generally see the <code>Clean</code> methods in <see cref="N:NSoup"/>.
+            </remarks>
+        </member>
+        <member name="M:NSoup.Safety.Cleaner.#ctor(NSoup.Safety.Whitelist)">
+            <summary>
+            Create a new cleaner, that sanitizes documents using the supplied whitelist.
+            </summary>
+            <param name="whitelist">white-list to clean with</param>
+        </member>
+        <member name="M:NSoup.Safety.Cleaner.Clean(NSoup.Nodes.Document)">
+            <summary>
+            Creates a new, clean document, from the original dirty document, containing only elements allowed by the whitelist. 
+            The original document is not modified. Only elements from the dirt document's <code>body</code> are used.
+            </summary>
+            <param name="dirtyDocument">Untrusted base document to clean.</param>
+            <returns>cleaned document.</returns>
+        </member>
+        <member name="M:NSoup.Safety.Cleaner.IsValid(NSoup.Nodes.Document)">
+            <summary>
+            Determines if the input document is valid, against the whitelist. It is considered valid if all the tags and attributes 
+            in the input HTML are allowed by the whitelist.
+            </summary>
+            <remarks>
+            This method can be used as a validator for user input forms. An invalid document will still be cleaned successfully 
+            using the <see cref="M:NSoup.Safety.Cleaner.Clean(NSoup.Nodes.Document)"/> document. If using as a validator, it is recommended to still clean the document 
+            to ensure enforced attributes are set correctly, and that the output is tidied.
+            </remarks>
+            <param name="dirtyDocument">document to test</param>
+            <returns>true if no tags or attributes need to be removed; false if they do</returns>
+        </member>
+        <member name="M:NSoup.Safety.Cleaner.CopySafeNodes(NSoup.Nodes.Element,NSoup.Nodes.Element)">
+            <summary>
+            Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
+            </summary>
+            <param name="source">source of HTML</param>
+            <param name="dest">destination element to copy into</param>
+            <returns>number of discarded elements (that were considered unsafe)</returns>
+        </member>
+        <!-- 对于成员“T:NSoup.Safety.Whitelist”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Safety.Whitelist.#ctor">
+            <summary>
+            Create a new, empty whitelist. Generally it will be better to start with a default prepared whitelist instead.
+            </summary>
+            <seealso cref="P:NSoup.Safety.Whitelist.Basic"/>
+            <seealso cref="P:NSoup.Safety.Whitelist.BasicWithImages"/>
+            <seealso cref="P:NSoup.Safety.Whitelist.SimpleText"/>
+            <seealso cref="P:NSoup.Safety.Whitelist.Relaxed"/>
+        </member>
+        <member name="M:NSoup.Safety.Whitelist.AddTags(System.String[])">
+            <summary>
+            Add a list of allowed elements to a whitelist. (If a tag is not allowed, it will be removed from the HTML.)
+            </summary>
+            <param name="tags">tag names to allow</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Safety.Whitelist.AddAttributes(System.String,System.String[])">
+            <summary>
+            Add a list of allowed attributes to a tag. (If an attribute is not allowed on an element, it will be removed.)
+            E.g.: AddAttributes("a", "href", "class") allows href and class attributes on a tags.
+            </summary>
+            <remarks>
+            To make an attribute valid for <b>all tags</b>, use the pseudo tag <code>:all</code>, e.g. 
+            <code>AddAttributes(":all", "class")</code>.
+            </remarks>
+            <param name="tag">The tag the attributes are for. The tag will be added to the allowed tag list if necessary.</param>
+            <param name="keys">List of valid attributes for the tag.</param>
+            <returns>This (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Safety.Whitelist.AddEnforcedAttribute(System.String,System.String,System.String)">
+            <summary>
+            Add an enforced attribute to a tag. An enforced attribute will always be added to the element. If the element 
+            already has the attribute set, it will be overridden.
+            </summary>
+            <remarks>E.g.: <code>AddEnforcedAttribute("a", "rel", "nofollow")</code> will make all <code>a</code> tags output as 
+            <code>&lt;a href="..." rel="nofollow"&gt;</code></remarks>
+            <param name="tag">The tag the enforced attribute is for. The tag will be added to the allowed tag list if necessary.</param>
+            <param name="key">The attribute key</param>
+            <param name="value">The enforced attribute value</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Safety.Whitelist.PreserveRelativeLinks(System.Boolean)">
+            <summary>
+            Configure this Whitelist to preserve relative links in an element's URL attribute, or convert them to absolute
+            links. By default, this is false: URLs will be  made absolute (e.g. start with an allowed protocol, like
+            e.g. "http://".
+            
+            Note that when handling relative links, the input document must have an appropriate base URI set when
+            parsing, so that the link's protocol can be confirmed. Regardless of the setting of the preserve relative
+            links option, the link must be resolvable against the base URI to an allowed protocol; otherwise the attribute
+            will be removed.
+            </summary>
+            <param name="preserve">True to allow relative links, false (default) to deny</param>
+            <returns>This Whitelist, for chaining.</returns>
+            <see cref="!:AddProtocols()"/>
+        </member>
+        <member name="M:NSoup.Safety.Whitelist.AddProtocols(System.String,System.String,System.String[])">
+            <summary>
+            Add allowed URL protocols for an element's URL attribute. This restricts the possible values of the attribute to 
+            URLs with the defined protocol.
+            </summary>
+            <remarks>E.g.: <code>AddProtocols("a", "href", "ftp", "http", "https")</code></remarks>
+            <param name="tag">Tag the URL protocol is for</param>
+            <param name="key">Attribute key</param>
+            <param name="protocols">List of valid protocols</param>
+            <returns>this, for chaining</returns>
+        </member>
+        <member name="P:NSoup.Safety.Whitelist.None">
+            <summary>
+            This whitelist allows only text nodes: all HTML will be stripped.
+            </summary>
+        </member>
+        <member name="P:NSoup.Safety.Whitelist.SimpleText">
+            <summary>
+            This whitelist allows only simple text formatting: <code>b, em, i, strong, u</code>. All other HTML (tags and attributes) will be removed.
+            </summary>
+        </member>
+        <member name="P:NSoup.Safety.Whitelist.Basic">
+            <summary>
+            This whitelist allows a fuller range of text nodes: <code>a, b, blockquote, br, cite, code, dd, dl, dt, em, i, li, 
+            ol, p, pre, q, small, strike, strong, sub, sup, u, ul</code>, and appropriate attributes.
+            </summary>
+            <remarks>
+            Links (<code>a</code> elements) can point to <code>http, https, ftp, mailto</code>, and have an enforced 
+            <code>rel=nofollow</code> attribute. 
+            Does not allow images.
+            </remarks>
+        </member>
+        <member name="P:NSoup.Safety.Whitelist.BasicWithImages">
+            <summary>
+            This whitelist allows the same text tags as {@link #basic}, and also allows <code>img</code> tags, with appropriate 
+            attributes, with <code>src</code> pointing to <code>http</code> or <code>https</code>.
+            </summary>
+        </member>
+        <member name="P:NSoup.Safety.Whitelist.Relaxed">
+            <summary>
+            This whitelist allows a full range of text and structural body HTML: <code>a, b, blockquote, br, caption, cite, 
+            code, col, colgroup, dd, dl, dt, em, h1, h2, h3, h4, h5, h6, i, img, li, ol, p, pre, q, small, strike, strong, sub, 
+            sup, table, tbody, td, tfoot, th, thead, tr, u, ul</code> 
+            </summary>
+            <remarks>Links do not have an enforced <code>rel=nofollow</code> attribute, but you can add that if desired.</remarks>
+        </member>
+        <member name="T:NSoup.Select.Collector">
+            <summary>
+            Collects a list of elements that match the supplied criteria.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Select.Collector.Collect(NSoup.Select.Evaluator,NSoup.Nodes.Element)">
+            <summary>
+            Build a list of elements, by visiting root and every descendant of root, and testing it against the evaluator.
+            </summary>
+            <param name="eval">Evaluator to test elements against</param>
+            <param name="root">root of tree to descend</param>
+            <returns>list of matches; empty if none</returns>
+        </member>
+        <member name="T:NSoup.Select.CombiningEvaluator">
+            <summary>
+            Base combining (and, or) evaluator.
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.Elements">
+            <summary>
+            A list of {@link Element Elements}, with methods that act on every element in the list
+            
+            To get an Elements object, use the <see cref="M:NSoup.Nodes.Element.Select(System.String)"/> method.
+            </summary>
+            <!--
+            Original Author: Jonathan Hedley, jonathan@hedley.net
+            Ported to .NET by: Amir Grozki
+            -->
+        </member>
+        <member name="M:NSoup.Select.Elements.Attr(System.String)">
+            <summary>
+            Get an attribute value from the first matched element that has the attribute.
+            </summary>
+            <param name="attributeKey">The attribute key.</param>
+            <returns>The attribute value from the first matched element that has the attribute.. If no elements were matched (isEmpty() == true), 
+            or if the no elements have the attribute, returns empty string.</returns>
+            <seealso cref="M:NSoup.Select.Elements.HasAttr(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.HasAttr(System.String)">
+            <summary>
+            Checks if any of the matched elements have this attribute set.
+            </summary>
+            <param name="attributeKey">attribute key</param>
+            <returns>true if any of the elements have the attribute; false if none do.</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Attr(System.String,System.String)">
+            <summary>
+            Set an attribute on all matched elements.
+            </summary>
+            <param name="attributeKey">attribute key</param>
+            <param name="attributeValue">attribute value</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.RemoveAttr(System.String)">
+            <summary>
+            Remove an attribute from every matched element.
+            </summary>
+            <param name="attributeKey">The attribute to remove.</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.AddClass(System.String)">
+            <summary>
+            Add the class name to every matched element's <code>class</code> attribute.
+            </summary>
+            <param name="className">class name to add</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.RemoveClass(System.String)">
+            <summary>
+            Remove the class name from every matched element's <code>class</code> attribute, if present.
+            </summary>
+            <param name="className">class name to remove</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.ToggleClass(System.String)">
+            <summary>
+            Toggle the class name on every matched element's <code>class</code> attribute.
+            </summary>
+            <param name="className">class name to add if missing, or remove if present, from every element.</param>
+            <returns>this</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.HasClass(System.String)">
+            <summary>
+            Determine if any of the matched elements have this class name set in their <code>class</code> attribute.
+            </summary>
+            <param name="className">class name to check for</param>
+            <returns>true if any do, false if none do</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Val">
+            <summary>
+            Get the form element's value of the first matched element.
+            </summary>
+            <returns>The form element's value, or empty if not set.</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Val"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Val(System.String)">
+            <summary>
+            Set the form element's value in each of the matched elements.
+            </summary>
+            <param name="value">The value to set into each matched element</param>
+            <returns>this (for chaining)</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Html">
+            <summary>
+            Gets the combined inner HTML of all matched elements.
+            </summary>
+            <seealso cref="P:NSoup.Select.Elements.Text"/>
+            <seealso cref="M:NSoup.Select.Elements.OuterHtml"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Html(System.String)">
+            <summary>
+            Set the inner HTML of each matched element.
+            </summary>
+            <param name="html">HTML to parse and set into each matched element.</param>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Html(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.OuterHtml">
+            <summary>
+            Get the combined outer HTML of all matched elements.
+            </summary>
+            <seealso cref="P:NSoup.Select.Elements.Text"/>
+            <seealso cref="M:NSoup.Select.Elements.Html"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.ToString">
+            <summary>
+            Get the combined outer HTML of all matched elements. Alias of <see cref="M:NSoup.Select.Elements.OuterHtml"/>.
+            </summary>
+            <returns>string of all element's outer HTML.</returns>
+            <seealso cref="P:NSoup.Select.Elements.Text"/>
+            <seealso cref="M:NSoup.Select.Elements.Html"/>
+        </member>
+        <!-- 对于成员“M:NSoup.Select.Elements.TagName(System.String)”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Select.Elements.Prepend(System.String)">
+            <summary>
+            Add the supplied HTML to the start of each matched element's inner HTML.
+            </summary>
+            <param name="html">HTML to add inside each element, before the existing HTML</param>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Prepend(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Append(System.String)">
+            <summary>
+            Add the supplied HTML to the end of each matched element's inner HTML.
+            </summary>
+            <param name="html">HTML to add inside each element, after the existing HTML</param>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Append(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Before(System.String)">
+            <summary>
+            Insert the supplied HTML before each matched element's outer HTML.
+            </summary>
+            <param name="html">HTML to insert before each element</param>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Before(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.after(System.String)">
+            <summary>
+            Insert the supplied HTML after each matched element's outer HTML.
+            </summary>
+            <param name="html">HTML to insert after each element</param>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.After(System.String)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Wrap(System.String)">
+            <summary>
+            Wrap the supplied HTML around each matched elements. For example, with HTML 
+            <code>&lt;p&gt;&lt;b&gt;This&lt;/b&gt; is &lt;b&gt;Jsoup&lt;/b&gt;&lt;/p&gt;</code>,
+            <code>doc.select("b").wrap("&lt;i&gt;&lt;/i&gt;");</code> 
+            becomes <code>&lt;p&gt;&lt;i&gt;&lt;b&gt;This&lt;/b&gt;&lt;/i&gt; is &lt;i&gt;&lt;b&gt;jsoup&lt;/b&gt;&lt;/i&gt;&lt;/p&gt;</code>
+            </summary>
+            <param name="html">HTML to wrap around each element, e.g. <code>&lt;div class="head"&gt;&lt;/div&gt;</code>. Can be arbitrarily deep.</param>
+            <returns>this (for chaining)</returns>
+            <seealso cref="!:Element.Wrap()"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Unwrap">
+            <summary>
+            Removes the matched elements from the DOM, and moves their children up into their parents. This has the effect of 
+            dropping the elements but keeping their children.
+            
+            This is useful for e.g removing unwanted formatting elements but keeping their contents.
+            
+            E.g. with HTML: <code>&lt;div&gt;&lt;font&gt;One&lt;/font&gt; &lt;font&gt;&lt;a href="/"&gt;Two&lt;/a&gt;&lt;/font&gt;&lt;/div&gt;</code>
+            <code>doc.Select("font").Unwrap();</code>
+            HTML = <code>&lt;div&gt;One &lt;a href="/"&gt;Two&lt;/a&gt;&lt;/div&gt;</code>
+            </summary>
+            <returns>this (for chaining)</returns>
+            <see cref="M:NSoup.Nodes.Node.Unwrap"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Empty">
+            <summary>
+            Empty (remove all child nodes from) each matched element. This is similar to setting the inner HTML of each 
+            element to nothing.
+            E.g. HTML: <code>&lt;div&gt;&lt;p&gt;Hello &lt;b&gt;there&lt;/b&gt;&lt;/p&gt; &lt;p&gt;now&lt;/p&gt;&lt;/div&gt;&lt;br&gt;</code>
+            <code>doc.Select("p").Empty();</code>
+            HTML = <code>&lt;div&gt;&lt;p&gt;&lt;/p&gt; &lt;p&gt;&lt;/p&gt;&lt;/div&gt;</code>
+            </summary>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Empty"/>
+            <seealso cref="M:NSoup.Select.Elements.Remove"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Remove">
+            <summary>
+            Remove each matched element from the DOM. This is similar to setting the outer HTML of each element to nothing.
+            E.g. HTML: <code>&lt;div&gt;&lt;p&gt;Hello&lt;/p&gt; &lt;p&gt;there&lt;/p&gt; &lt;img /&gt;&lt;/div&gt;</code>
+            <code>doc.Select("p").Remove();</code>
+            HTML = <code>&lt;div&gt; &lt;img /&gt;&lt;/div&gt;</code>
+            </summary>
+            <remarks>
+            Note that this method should not be used to clean user-submitted HTML; rather, use <see cref="!:Cleaner"/> to clean HTML. 
+            </remarks>
+            <returns>this, for chaining</returns>
+            <seealso cref="M:NSoup.Nodes.Element.Empty"/>
+            <seealso cref="M:NSoup.Select.Elements.Empty"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Select(System.String)">
+            <summary>
+            Find matching elements within this element list.
+            </summary>
+            <param name="query">A <see cref="T:NSoup.Select.Selector"/> query</param>
+            <returns>the filtered list of elements, or an empty list if none match.</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Not(System.String)">
+            <summary>
+            Remove elements from this list that match the <see cref="T:NSoup.Select.Selector"/> query.
+            E.g. HTML: <code>&lt;div class=logo&gt;One&lt;/div&gt; &lt;div&gt;Two&lt;/div&gt;</code>
+            <code>Elements divs = doc.Select("div").Not("#logo");</code>
+            Result: <code>divs: [&lt;div&gt;Two&lt;/div&gt;]</code>
+            </summary>
+            <param name="query">query the selector query whose results should be removed from these elements</param>
+            <returns>a new elements list that contains only the filtered results</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Eq(System.Int32)">
+            <summary>
+            Get the <i>nth</i> matched element as an Elements object.
+            </summary>
+            <param name="index">the (zero-based) index of the element in the list to retain</param>
+            <returns>Elements containing only the specified element, or, if that element did not exist, an empty list.</returns>
+            <seealso cref="!:Get(int)"/>
+        </member>
+        <member name="M:NSoup.Select.Elements.Is(System.String)">
+            <summary>
+            Test if any of the matched elements match the supplied query.
+            </summary>
+            <param name="query">A selector</param>
+            <returns>true if at least one element in the list matches the query.</returns>
+        </member>
+        <member name="M:NSoup.Select.Elements.Traverse(NSoup.Select.NodeVisitor)">
+            <summary>
+            Perform a depth-first traversal on each of the selected elements.
+            </summary>
+            <param name="nodeVisitor">The visitor callbacks to perform on each node</param>
+            <returns>This, for chaining</returns>
+        </member>
+        <member name="P:NSoup.Select.Elements.Text">
+            <summary>
+            Gets the combined text of all the matched elements.
+            </summary>
+            <remarks>
+            Note that it is possible to get repeats if the matched elements contain both parent elements and their own 
+            children, as the Element.Text method returns the combined text of a parent and all its children.
+            </remarks>
+            <seealso cref="M:NSoup.Nodes.Element.Text"/>
+        </member>
+        <member name="P:NSoup.Select.Elements.Parents">
+            <summary>
+            Gets all of the parents and ancestor elements of the matched elements.
+            </summary>
+        </member>
+        <member name="P:NSoup.Select.Elements.First">
+            <summary>
+            Gets the first matched element or <code>null</code> if contents is empty.
+            </summary>
+        </member>
+        <member name="P:NSoup.Select.Elements.Last">
+            <summary>
+            Gets the last matched element or <code>null</code> if contents is empty.
+            </summary>
+        </member>
+        <member name="T:NSoup.Select.NodeTraversor">
+            <summary>
+            Depth-first node traversor. Use to iterate through all nodes under and including the specified root node.
+            This implementation does not use recursion, so a deep DOM does not risk blowing the stack.
+            </summary>
+        </member>
+        <member name="M:NSoup.Select.NodeTraversor.#ctor(NSoup.Select.NodeVisitor)">
+            <summary>
+            Create a new traversor.
+            </summary>
+            <param name="visitor">A class implementing the NodeVisitor interface, to be called when visiting each node.</param>
+        </member>
+        <member name="M:NSoup.Select.NodeTraversor.Traverse(NSoup.Nodes.Node)">
+            <summary>
+            Start a depth-first traverse of the root and all of its descendants.
+            </summary>
+            <param name="root">The root node point to traverse.</param>
+        </member>
+        <member name="T:NSoup.Select.QueryParser">
+            <summary>
+            Parses a CSS selector into an Evaluator tree.
+            </summary>
+        </member>
+        <member name="M:NSoup.Select.QueryParser.#ctor(System.String)">
+            <summary>
+            Create a new QueryParser.
+            </summary>
+            <param name="query">query CSS query</param>
+        </member>
+        <member name="M:NSoup.Select.QueryParser.Parse(System.String)">
+            <summary>
+            Parse a CSS query into an Evaluator.
+            </summary>
+            <param name="query">query CSS query</param>
+            <returns>Evaluator</returns>
+        </member>
+        <member name="M:NSoup.Select.QueryParser.Parse">
+            <summary>
+            Parse the query
+            </summary>
+            <returns>Evaluator</returns>
+        </member>
+        <!-- 对于成员“T:NSoup.Select.Selector”忽略有格式错误的 XML 注释 -->
+        <member name="M:NSoup.Select.Selector.Select(System.String,NSoup.Nodes.Element)">
+            <summary>
+            Find elements matching selector.
+            </summary>
+            <param name="query">CSS selector</param>
+            <param name="root">root element to descend into</param>
+            <returns>matching elements, empty if not</returns>
+        </member>
+        <member name="M:NSoup.Select.Selector.Select(System.String,System.Collections.Generic.IEnumerable{NSoup.Nodes.Element})">
+            <summary>
+            Find elements matching selector.
+            </summary>
+            <param name="query">CSS selector</param>
+            <param name="roots">root elements to descend into</param>
+            <returns>matching elements, empty if not</returns>
+        </member>
+        <member name="T:NSoup.Select.StructuralEvaluator">
+            <summary>
+            Base structural evaluator.
+            </summary>
+        </member>
+        <member name="T:NSoup.UnsupportedMimeTypeException">
+            <summary>
+            Signals that a HTTP response returned a mime type that is not supported.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+  <UrlPattern format="{0}/dp/{1}" example="https://www.amazon.co.uk/dp/B009A4A8ZO">
+    <param index="0" name="SiteUrl" />
+    <param index="1" name="Asin" />
+  </UrlPattern>
+  <element cssQuery="[class=a-spacing-small item]" firstOnly="true">
+    <img retAttr="src" name="imageUrls" />
+  </element>
+  <result>
+    <item name="imageUrls" />
+  </result>
+</root>
