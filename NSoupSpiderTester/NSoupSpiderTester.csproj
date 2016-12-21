@@ -87,6 +87,7 @@
     </Content>
     <Content Include="rules\sellerName-uk.xml">
       <SubType>Designer</SubType>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="testDocs\GrabBuyboxWinner.htm">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

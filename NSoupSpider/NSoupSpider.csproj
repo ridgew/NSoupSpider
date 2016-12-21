@@ -45,11 +45,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExecutionContextScope.cs" />
-    <Compile Include="ExtractElement.cs" />
-    <Compile Include="ExtractNodeDefine.cs" />
+    <Compile Include="ExtractDataNode.cs" />
+    <Compile Include="ExtractDocumentReport.cs" />
+    <Compile Include="ExtractMethod.cs" />
+    <Compile Include="ExtractNode.cs" />
+    <Compile Include="ExtractParam.cs" />
+    <Compile Include="ScopeResult.cs" />
     <Compile Include="ExtractTaskDocument.cs" />
     <Compile Include="NSoupDocumentSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrlDataSource.cs" />
     <Compile Include="WorkInScopeObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

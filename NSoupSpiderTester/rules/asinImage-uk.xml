@@ -4,7 +4,7 @@
     <param index="0" name="SiteUrl" />
     <param index="1" name="Asin" />
   </UrlPattern>
-  <element cssQuery="[class=a-spacing-small item]" firstOnly="true">
+  <element cssQuery="[class='a-spacing-small item']" firstOnly="true">
     <img retAttr="src" name="imageUrls" />
   </element>
   <result>

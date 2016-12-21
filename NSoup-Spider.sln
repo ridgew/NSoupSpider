@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C66E2854-5CFF-4DD3-B867-3FE49DE1E96A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSoupSpider", "NSoupSpider\NSoupSpider.csproj", "{2F9882BB-D4A3-45E5-BA56-DBF0F44110D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSoupSpiderTester", "NSoupSpiderTester\NSoupSpiderTester.csproj", "{8EC708C7-A14B-4E94-9648-80096C0F0B6A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F9882BB-D4A3-45E5-BA56-DBF0F44110D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F9882BB-D4A3-45E5-BA56-DBF0F44110D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F9882BB-D4A3-45E5-BA56-DBF0F44110D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F9882BB-D4A3-45E5-BA56-DBF0F44110D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8EC708C7-A14B-4E94-9648-80096C0F0B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8EC708C7-A14B-4E94-9648-80096C0F0B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8EC708C7-A14B-4E94-9648-80096C0F0B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8EC708C7-A14B-4E94-9648-80096C0F0B6A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = NSoup.vsmdi
+	EndGlobalSection
+EndGlobal

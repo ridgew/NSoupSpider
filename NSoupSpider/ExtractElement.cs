@@ -2,6 +2,7 @@
 using NSoup.Select;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,39 +10,37 @@ using System.Xml;
 
 namespace NSoupSpider
 {
+    /// <summary>
+    /// 抽取数据操作
+    /// </summary>
     [Serializable]
+    [DebuggerDisplay("Parent={ParentExtractElement,nq}, CssQuery={CssQuery}, Children={SubExtractElements.Count}")]
     public class ExtractElement : WorkInScopeObject
     {
-        public ExtractElement(Document doc, XmlNode node, string cssQuery)
-        {
-            DocRoot = doc;
-            NodeDefine = node;
-            CssQuery = cssQuery;
-        }
-
-        public ExtractElement(Element element, XmlNode node, string cssQuery)
+        public ExtractElement(Element element, ExtractDataNode node, string cssQuery)
         {
             _containerElement = element;
-
-            DocRoot = element.OwnerDocument;
-            NodeDefine = node;
-
+            DefineNode = node;
             CssQuery = cssQuery;
         }
 
-        public Document DocRoot { get; set; }
-
-        public XmlNode NodeDefine { get; set; }
+        public ExtractDataNode DefineNode { get; set; }
 
         public string CssQuery { get; set; }
 
+        Element _mappingElement = null;
 
-        Element _mapElement = null;
         Element _containerElement = null;
 
         public Element GetMapElement()
         {
-            return _mapElement;
+            return _mappingElement;
+        }
+
+        public ExtractElement ParentExtractElement
+        {
+            get;
+            set;
         }
 
         List<ExtractElement> _subElements = new List<ExtractElement>();
@@ -53,35 +52,13 @@ namespace NSoupSpider
 
         public ExtractElement DataBind()
         {
-            Elements _bindElements = null;
-            if (_containerElement != null)
-            {
-                _bindElements = _containerElement.Select(CssQuery);
-            }
-            else
-            {
-                _bindElements = DocRoot.Select(CssQuery);
-            }
+            Elements _bindElements = _containerElement.Select(CssQuery); ;
 
             if (_bindElements != null && _bindElements.Count > 0)
-                _mapElement = _bindElements[0];
+                _mappingElement = _bindElements[0];
 
-            if (_mapElement != null)
+            if (_mappingElement != null && DefineNode != null)
             {
-                #region 子级Element抽取
-                if (NodeDefine != null && NodeDefine.ChildNodes != null && NodeDefine.ChildNodes.Count > 0)
-                {
-                    foreach (XmlNode subNode in NodeDefine.ChildNodes)
-                    {
-                        ExtractNodeDefine grabNode = new ExtractNodeDefine(subNode);
-                        NodeType currentType = grabNode.GetExtractType();
-                        if (currentType == NodeType.Element)
-                        {
-                            SubExtractElements.AddRange(grabNode.ExtractInScope(_mapElement, this.Scope));
-                        }
-                    }
-                }
-                #endregion
             }
 
             return this;
@@ -89,49 +66,46 @@ namespace NSoupSpider
 
         bool IsReturnElement()
         {
-            if (NodeDefine == null) return false;
-
-            if (NodeDefine.Attributes["return"] == null)
-            {
-                return NodeDefine.Attributes["retAttr"] != null
-                    && string.IsNullOrEmpty(NodeDefine.Attributes["retAttr"].Value) == false
-
-                    && NodeDefine.Attributes["name"] != null
-                    && string.IsNullOrEmpty(NodeDefine.Attributes["name"].Value) == false;
-            }
-            else
-            {
-                return Convert.ToBoolean(NodeDefine.Attributes["return"].Value);
-            }
+            if (DefineNode == null) return false;
+            return DefineNode.IsReturNode();
         }
 
+        /// <summary>
+        /// 主要抽取数据处理
+        /// </summary>
+        /// <returns></returns>
         public ExtractElement Extract()
         {
-            if (_mapElement != null && IsReturnElement())
+            if (_mappingElement != null && IsReturnElement())
             {
                 #region 有返回值
-
-                XmlAttribute targetAttrs = NodeDefine.Attributes["retAttr"];
-                if (targetAttrs != null && !string.IsNullOrEmpty(targetAttrs.Value))
-                {
-                    string[] retAttrs = targetAttrs.Value.Split(new char[] { ',', '|' });
-                    if (NodeDefine.Attributes["name"] != null && !string.IsNullOrEmpty(NodeDefine.Attributes["name"].Value))
-                    {
-                        string[] scopeNames = NodeDefine.Attributes["name"].Value.Split(new char[] { ',', '|' });
-                        if (retAttrs.Length <= scopeNames.Length)
-                        {
-                            for (int i = 0, j = retAttrs.Length; i < j; i++)
-                            {
-                                string retVal = (retAttrs[i] == "innerText") ? _mapElement.Text() : _mapElement.Attr(retAttrs[i]);
-                                ExecutionContext.Current.SetValue(scopeNames[i], retVal);
-                            }
-                        }
-                    }
-                }
+                //XmlAttribute targetAttrs = DefineNode.Attributes["retAttr"];
+                //if (targetAttrs != null && !string.IsNullOrEmpty(targetAttrs.Value))
+                //{
+                //    string[] retAttrs = targetAttrs.Value.Split(new char[] { ',', '|' });
+                //    if (DefineNode.Attributes["name"] != null && !string.IsNullOrEmpty(DefineNode.Attributes["name"].Value))
+                //    {
+                //        string[] scopeNames = DefineNode.Attributes["name"].Value.Split(new char[] { ',', '|' });
+                //        if (retAttrs.Length <= scopeNames.Length)
+                //        {
+                //            for (int i = 0, j = retAttrs.Length; i < j; i++)
+                //            {
+                //                string retVal = (retAttrs[i] == "innerText") ? _mapElement.Text() : _mapElement.Attr(retAttrs[i]);
+                //                ExecutionContext.Current.SetValue(scopeNames[i], retVal);
+                //            }
+                //        }
+                //    }
+                //}
                 #endregion
             }
 
             return this;
+        }
+
+
+        public override string ToString()
+        {
+            return DefineNode.GetFullPath();
         }
 
     }

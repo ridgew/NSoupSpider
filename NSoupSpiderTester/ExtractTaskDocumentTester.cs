@@ -22,86 +22,35 @@ namespace NSoupSpiderTester
         [TestMethod]
         public void DocReaderSellerNameTest()
         {
-            using (ExecutionContextScope scope = new ExecutionContextScope())
-            {
-                ExtractTaskDocument extraTask = new ExtractTaskDocument();
-                string html = File.ReadAllText(Path.Combine(baseDir, @"testDocs\olp_merch_rating_3.htm"));
-                Document rootDoc = NSoupClient.Parse(html);
+            TestDocumentWithRules(Path.Combine(baseDir, @"testDocs\olp_merch_rating_3.htm"), Path.Combine(baseDir, @"rules\sellerName-uk.xml"));
+        }
 
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(Path.Combine(baseDir, @"rules\sellerName-uk.xml"));
+        void TestDocumentWithRules(string docPath, string rulePath)
+        {
+            string html = File.ReadAllText(docPath);
+            Document rootDoc = NSoupClient.Parse(html);
 
-                //XmlReader reader = XmlReader.Create(Path.Combine(@"E:\Dev\Error", "sellerName-uk.xml"));
-                XmlElement doc = xmlDoc.DocumentElement;
-                foreach (XmlNode node in doc.ChildNodes)
-                {
-                    ExtractNodeDefine GrabNode = new ExtractNodeDefine(node);
-                    NodeType currentType = GrabNode.GetExtractType();
-                    if (currentType == NodeType.Element)
-                    {
-                        extraTask.ExtractElements.AddRange(GrabNode.ExtractInScope(rootDoc, scope));
-                    }
-                }
-
-                var context = ExecutionContext.Current;
-
-            }
+            ExtractTaskDocument extraTask = new ExtractTaskDocument(rulePath).BindRules();
+            ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
         }
 
         [TestMethod]
         public void DocReaderGrabBuyboxWinnerTest()
         {
-            using (ExecutionContextScope scope = new ExecutionContextScope())
-            {
-
-                ExtractTaskDocument extraTask = new ExtractTaskDocument();
-                string html = File.ReadAllText(Path.Combine(baseDir, @"testDocs\GrabBuyboxWinner.htm"));
-                Document rootDoc = NSoupClient.Parse(html);
-
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(Path.Combine(baseDir, @"rules\GrabBuyboxWinnerHandler-uk.xml"));
-
-                XmlElement doc = xmlDoc.DocumentElement;
-                foreach (XmlNode node in doc.ChildNodes)
-                {
-                    ExtractNodeDefine GrabNode = new ExtractNodeDefine(node);
-                    NodeType currentType = GrabNode.GetExtractType();
-                    if (currentType == NodeType.Element)
-                    {
-                        extraTask.ExtractElements.AddRange(GrabNode.ExtractInScope(rootDoc, scope));
-                    }
-                }
-
-                var context = ExecutionContext.Current;
-
-            }
+            TestDocumentWithRules(Path.Combine(baseDir, @"testDocs\GrabBuyboxWinner.htm"), Path.Combine(baseDir, @"rules\GrabBuyboxWinnerHandler-uk.xml"));
         }
 
         [TestMethod]
         public void DocReaderAsinImageTest()
         {
-            using (ExecutionContextScope scope = new ExecutionContextScope())
-            {
-                ExtractTaskDocument extraTask = new ExtractTaskDocument();
-                string html = File.ReadAllText(Path.Combine(baseDir, @"testDocs\GrabBuyboxWinner.htm"));
-                Document rootDoc = NSoupClient.Parse(html);
-
-                XmlDocument xmlDoc = new XmlDocument();
-                xmlDoc.Load(Path.Combine(baseDir, @"rules\asinImage-uk.xml"));
-
-                XmlElement doc = xmlDoc.DocumentElement;
-                foreach (XmlNode node in doc.ChildNodes)
-                {
-                    ExtractNodeDefine GrabNode = new ExtractNodeDefine(node);
-                    NodeType currentType = GrabNode.GetExtractType();
-                    if (currentType == NodeType.Element)
-                    {
-                        extraTask.ExtractElements.AddRange(GrabNode.ExtractInScope(rootDoc, scope));
-                    }
-                }
-
-                var context = ExecutionContext.Current;
-            }
+            TestDocumentWithRules(Path.Combine(baseDir, @"testDocs\GrabBuyboxWinner.htm"), Path.Combine(baseDir, @"rules\asinImage-uk.xml"));
         }
+
+        [TestMethod]
+        public void GrabOfferListingsHandlerTest()
+        {
+            TestDocumentWithRules(Path.Combine(baseDir, @"testDocs\offer-listing-B009A4A8ZO.htm"), Path.Combine(baseDir, @"rules\GrabOfferListingsHandler-uk.xml"));
+        }
+
     }
 }

@@ -8,7 +8,7 @@
     <img return="true" retAttr="src" name="SellerImage"  />
     <h1 return="true" retAttr="innerText" name="SellerName" />
   </div>
-  <result>
+  <result isObject="true" includeAll="true">
     <item name="SellerName" />
     <item name="SellerId" />
     <item name="SellerImage" />
