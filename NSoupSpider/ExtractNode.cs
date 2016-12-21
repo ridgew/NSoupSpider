@@ -62,7 +62,7 @@ namespace NSoupSpider
         }
 
 
-        string extractIdFromNodeAttribute(XmlNode node)
+        protected string extractIdFromNodeAttribute(XmlNode node)
         {
             if (node.NodeType == XmlNodeType.Document)
             {

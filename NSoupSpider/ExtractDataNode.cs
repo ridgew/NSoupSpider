@@ -51,7 +51,20 @@ namespace NSoupSpider
             return _rawNode.Name;
         }
 
-        public bool IsCollection()
+        /// <summary>
+        /// 是否是返回集合的节点定义
+        /// </summary>
+        /// <returns></returns>
+        protected bool IsReturnCollection()
+        {
+            if (_rawNode.Attributes["returnCollection"] != null)
+            {
+                return Convert.ToBoolean(_rawNode.Attributes["returnCollection"].Value);
+            }
+            return false;
+        }
+
+        protected bool IsCollection()
         {
             if (_rawNode.Attributes["returnCollection"] != null)
             {
@@ -64,9 +77,35 @@ namespace NSoupSpider
             return false;
         }
 
+        public string GetCollectionKey()
+        {
+            if (_rawNode.Attributes["name"] != null)
+                return _rawNode.Attributes["name"].Value;
+            return extractIdFromNodeAttribute(_rawNode);
+        }
+
+        protected bool IsCollectionDescendants(out int deepth)
+        {
+            deepth = -1;
+            ExtractDataNode parentNode = ParentExtractNode;
+            while (parentNode != null)
+            {
+                if (parentNode.IsReturnCollection())
+                {
+                    deepth = parentNode.Deepth;
+                    return true;
+                }
+                else
+                {
+                    parentNode = parentNode.ParentExtractNode;
+                }
+            }
+            return false;
+        }
+
         public bool IsReturNode()
         {
-            if (IsCollection() == false)
+            if (IsReturnCollection() == false)
             {
                 if (_rawNode.Attributes["return"] == null)
                 {
@@ -89,7 +128,7 @@ namespace NSoupSpider
             if (!IsReturNode()) return null;
 
             List<ExtractMethod> methods = new List<ExtractMethod>();
-            if (IsCollection() == false)
+            if (IsReturnCollection() == false)
             {
                 #region 非集合提取
                 AttributeExtractMethod attr = new AttributeExtractMethod();
@@ -117,7 +156,8 @@ namespace NSoupSpider
             else
             {
                 //TODO
-                string collectionKey = _rawNode.Attributes["name"].Value;
+                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : extractIdFromNodeAttribute(_rawNode);
+                string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
                 CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
                 methods.Add(colMethod);
             }
@@ -129,6 +169,12 @@ namespace NSoupSpider
             string cssQuery = GetCssQuery();
             return container.Select(cssQuery);
         }
+
+        /// <summary>
+        /// 父级抽取节点
+        /// </summary>
+        public ExtractDataNode ParentExtractNode { get; set; }
+
 
         List<ExtractDataNode> childNodes = new List<ExtractDataNode>();
         /// <summary>
@@ -148,7 +194,9 @@ namespace NSoupSpider
                 for (int i = 0, j = nodesList.Count; i < j; i++)
                 {
                     XmlNode subNode = nodesList[i];
-                    eNode.ChildNodes.Add(ExtractDataNode.ExtractNodeAll(subNode, deepth + 1));
+                    ExtractDataNode childNode = ExtractDataNode.ExtractNodeAll(subNode, deepth + 1);
+                    childNode.ParentExtractNode = eNode;
+                    eNode.ChildNodes.Add(childNode);
                 }
             }
             return eNode;
@@ -171,18 +219,42 @@ namespace NSoupSpider
                         }
                     }
                 }
+
+                int collectionDeepth = -1;
+                if (IsCollectionDescendants(out collectionDeepth))
+                {
+                    Scope.ResetScopeObject(collectionDeepth + 1, Scope.GetScopeObject(Deepth));
+                }
             }
 
             var subElements = ExtractElements(container);
             if (subElements != null && subElements.Count > 0)
             {
-                foreach (var subContainer in subElements)
+                if (IsReturnCollection())
                 {
-                    foreach (ExtractDataNode node in ChildNodes)
+                    List<Dictionary<string, Object>> colist = new List<Dictionary<string, object>>();
+                    foreach (var subContainer in subElements)
                     {
-                        node.ExtractDataAll(subContainer);
+                        foreach (ExtractDataNode node in ChildNodes)
+                        {
+                            node.ExtractDataAll(subContainer);
+                        }
+                        colist.Add(Scope.GetScopeObject(Deepth + 1));
+                        Scope.ResetScopeObject(Deepth + 1);
+                    }
+                    Scope.Combine(Deepth, GetCollectionKey(), colist);
+                }
+                else
+                {
+                    foreach (var subContainer in subElements)
+                    {
+                        foreach (ExtractDataNode node in ChildNodes)
+                        {
+                            node.ExtractDataAll(subContainer);
+                        }
                     }
                 }
+
             }
         }
 

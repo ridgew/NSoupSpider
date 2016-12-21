@@ -6,7 +6,7 @@
   </UrlPattern>
   <div id="olpOfferListColumn">
     <div class="a-row" returnCollection="true" name="CompetivePricesList">
-      <div cssQuery="[class='a-spacing-mini olpOffer']" >
+      <div cssQuery="[class*='a-spacing-mini olpOffer']" >
         <span class="olpOfferPrice" retAttr="innerText" name="priceStr" />
         <span class="olpShippingPrice" retAttr="innerText" name="shippingFeeStr" firstOnly="true" />
         <span class="olpCondition" retAttr="innerText" name="conditionType" firstOnly="true" />

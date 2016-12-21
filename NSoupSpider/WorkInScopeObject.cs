@@ -47,11 +47,22 @@ namespace NSoupSpider
             return string.Format("#ExtractScope#{0}", scopeLen);
         }
 
+        public void ResetScopeObject(int scopeLen, Dictionary<string, object> dict = null)
+        {
+            ExecutionContext current = ExecutionContext.Current;
+            if (current == null)
+                throw new InvalidOperationException("代码需运行在ExecutionContextScope环境中！");
+
+            string cmpScopeKey = getScopeKey(scopeLen);
+            current.SetValue(cmpScopeKey, dict ?? new Dictionary<string, object>());
+        }
+
         public Dictionary<string, object> GetScopeObject(int scopeLen)
         {
             ExecutionContext current = ExecutionContext.Current;
             if (current == null)
                 throw new InvalidOperationException("代码需运行在ExecutionContextScope环境中！");
+
             string cmpScopeKey = getScopeKey(scopeLen);
             return current.GetValue<Dictionary<string, object>>(cmpScopeKey);
         }
