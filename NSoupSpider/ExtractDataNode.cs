@@ -132,7 +132,7 @@ namespace NSoupSpider
 
         List<ExtractDataNode> childNodes = new List<ExtractDataNode>();
         /// <summary>
-        /// 
+        /// 0个或多个子节点
         /// </summary>
         public List<ExtractDataNode> ChildNodes
         {
@@ -163,9 +163,12 @@ namespace NSoupSpider
                 foreach (ExtractMethod fn in fns)
                 {
                     var dict = fn.ExtractFrom(container);
-                    foreach (var item in dict.Keys)
+                    if (dict != null)
                     {
-                        Scope.Combine(Deepth, item, dict[item]);
+                        foreach (var item in dict.Keys)
+                        {
+                            Scope.Combine(Deepth, item, dict[item]);
+                        }
                     }
                 }
             }

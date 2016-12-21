@@ -50,23 +50,23 @@ namespace NSoupSpider
         public override Dictionary<string, object> ExtractFrom(Element element)
         {
             Dictionary<string, object> retDict = new Dictionary<string, object>();
-            foreach (AttrMapping attr in AttrNames)
+            if (element != null)
             {
-                string retVal = string.Empty;
-
-                if (attr.AttrName.Equals("innerText", StringComparison.InvariantCultureIgnoreCase))
+                foreach (AttrMapping attr in AttrNames)
                 {
-                    retVal = element.Text();
+                    string retVal = string.Empty;
+                    if (attr.AttrName.Equals("innerText", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        retVal = element.Text();
+                    }
+                    else
+                    {
+                        retVal = element.Attributes[attr.AttrName];
+                    }
+                    if (!retDict.ContainsKey(attr.MappingKey))
+                        retDict.Add(attr.MappingKey, retVal);
                 }
-                else
-                {
-                    retVal = element.Attributes[attr.AttrName];
-                }
-
-                if (!retDict.ContainsKey(attr.MappingKey))
-                    retDict.Add(attr.MappingKey, retVal);
             }
-
             return retDict;
         }
 
@@ -86,9 +86,13 @@ namespace NSoupSpider
 
         public ExtractMethod ItemExtract { get; set; }
 
-        public override Dictionary<string, object> ExtractFrom(NSoup.Nodes.Element element)
+        public override Dictionary<string, object> ExtractFrom(Element element)
         {
-            return ItemExtract.ExtractFrom(element);
+            //TODO
+            if (ItemExtract != null)
+                return ItemExtract.ExtractFrom(element);
+            else
+                return null;
         }
     }
 

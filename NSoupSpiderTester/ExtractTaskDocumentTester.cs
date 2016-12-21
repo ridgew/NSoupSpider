@@ -29,9 +29,17 @@ namespace NSoupSpiderTester
         {
             string html = File.ReadAllText(docPath);
             Document rootDoc = NSoupClient.Parse(html);
+            using (ExecutionContextScope scope = new ExecutionContextScope())
+            {
+                ExtractTaskDocument extraTask = new ExtractTaskDocument(rulePath).BindRules();
+                ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
 
-            ExtractTaskDocument extraTask = new ExtractTaskDocument(rulePath).BindRules();
-            ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
+                if (!report.IsSuccess())
+                {
+                    throw report.ExtractExcetpion;
+                }
+            }
+
         }
 
         [TestMethod]
