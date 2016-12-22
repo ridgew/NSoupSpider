@@ -219,6 +219,23 @@ namespace NSoupSpider
             return true;
         }
 
+        /// <summary>
+        /// 只提取第一个匹配
+        /// </summary>
+        /// <returns></returns>
+        public bool ExtractFirstOnly()
+        {
+            XmlAttribute attr = _rawNode.Attributes["firstOnly"];
+            if (attr != null && string.IsNullOrEmpty(attr.Value) == false)
+            {
+                return Convert.ToBoolean(_rawNode.Attributes["return"].Value);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static ExtractDataNode ExtractNodeAll(XmlNode node, int deepth)
         {
             ExtractDataNode eNode = new ExtractDataNode(node, deepth);
@@ -281,6 +298,9 @@ namespace NSoupSpider
                 if (node.DefineNode.Name.Equals("attrs", StringComparison.InvariantCultureIgnoreCase))
                 {
                     //属性提取
+                    ExtractElement extract = new ExtractElement(node.DefineNode, node.Deepth);
+                    extract.OperateElement = container;
+                    extract.ExtractToScope(Scope);
                 }
                 else if (node.DefineNode.Name.Equals("when", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -290,7 +310,10 @@ namespace NSoupSpider
                 {
                     //变量（参数）绑定
                 }
-                node.ExtractDataAll(container);
+                else
+                {
+                    node.ExtractDataAll(container);
+                }
             }
         }
 
@@ -329,6 +352,9 @@ namespace NSoupSpider
                         #region 子级处理
                         ExtractChild(element);
                         #endregion
+
+                        if (ExtractFirstOnly() == true)
+                            break;
                     }
                 }
             }

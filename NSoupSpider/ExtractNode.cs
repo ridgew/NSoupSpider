@@ -139,6 +139,19 @@ namespace NSoupSpider
                 return "^";
         }
 
+        protected string GetNotNullAttrValue(string attrName)
+        {
+            string NotNull = String.Empty;
+            XmlAttribute attr = _rawNode.Attributes[attrName];
+            if (attr != null)
+                NotNull = attr.Value ?? "";
+            return NotNull;
+        }
+
+        public bool IsOperateNode()
+        {
+            return !string.IsNullOrEmpty(GetNotNullAttrValue("op"));
+        }
 
         internal XmlNodeList GetChildXmlNodes()
         {

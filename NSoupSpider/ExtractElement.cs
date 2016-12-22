@@ -11,101 +11,41 @@ using System.Xml;
 namespace NSoupSpider
 {
     /// <summary>
-    /// 抽取数据操作
+    /// 抽取数据操作（暂时只支持属性）
     /// </summary>
-    [Serializable]
-    [DebuggerDisplay("Parent={ParentExtractElement,nq}, CssQuery={CssQuery}, Children={SubExtractElements.Count}")]
-    public class ExtractElement : WorkInScopeObject
+    public class ExtractElement : ExtractNode
     {
-        public ExtractElement(Element element, ExtractDataNode node, string cssQuery)
+        public ExtractElement(XmlNode node, int deepth)
+            : base(node, deepth)
         {
-            _containerElement = element;
-            DefineNode = node;
-            CssQuery = cssQuery;
+
         }
 
-        public ExtractDataNode DefineNode { get; set; }
+        public Element OperateElement { get; set; }
 
-        public string CssQuery { get; set; }
-
-        Element _mappingElement = null;
-
-        Element _containerElement = null;
-
-        public Element GetMapElement()
+        public void ExtractToScope(ExtractScope Scope)
         {
-            return _mappingElement;
-        }
-
-        public ExtractElement ParentExtractElement
-        {
-            get;
-            set;
-        }
-
-        List<ExtractElement> _subElements = new List<ExtractElement>();
-
-        public List<ExtractElement> SubExtractElements
-        {
-            get { return _subElements; }
-        }
-
-        public ExtractElement DataBind()
-        {
-            Elements _bindElements = _containerElement.Select(CssQuery); ;
-
-            if (_bindElements != null && _bindElements.Count > 0)
-                _mappingElement = _bindElements[0];
-
-            if (_mappingElement != null && DefineNode != null)
+            string attrName = GetNotNullAttrValue("name");
+            string paramName = GetNotNullAttrValue("paramName");
+            string rawReturn = OperateElement.Attr(attrName);
+            if (IsOperateNode() == false)
             {
+                Scope.Set(paramName, rawReturn);
             }
-
-            return this;
-        }
-
-        bool IsReturnElement()
-        {
-            if (DefineNode == null) return false;
-            return DefineNode.IsReturNode();
-        }
-
-        /// <summary>
-        /// 主要抽取数据处理
-        /// </summary>
-        /// <returns></returns>
-        public ExtractElement Extract()
-        {
-            if (_mappingElement != null && IsReturnElement())
+            else
             {
-                #region 有返回值
-                //XmlAttribute targetAttrs = DefineNode.Attributes["retAttr"];
-                //if (targetAttrs != null && !string.IsNullOrEmpty(targetAttrs.Value))
-                //{
-                //    string[] retAttrs = targetAttrs.Value.Split(new char[] { ',', '|' });
-                //    if (DefineNode.Attributes["name"] != null && !string.IsNullOrEmpty(DefineNode.Attributes["name"].Value))
-                //    {
-                //        string[] scopeNames = DefineNode.Attributes["name"].Value.Split(new char[] { ',', '|' });
-                //        if (retAttrs.Length <= scopeNames.Length)
-                //        {
-                //            for (int i = 0, j = retAttrs.Length; i < j; i++)
-                //            {
-                //                string retVal = (retAttrs[i] == "innerText") ? _mapElement.Text() : _mapElement.Attr(retAttrs[i]);
-                //                ExecutionContext.Current.SetValue(scopeNames[i], retVal);
-                //            }
-                //        }
-                //    }
-                //}
-                #endregion
+                string opType = GetNotNullAttrValue("op");
+                if (opType.Equals("Regex", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    string pattern = GetNotNullAttrValue("pattern");
+                    int groupVal = Convert.ToInt32("0" + GetNotNullAttrValue("retGroup"));
+                    System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(rawReturn, pattern);
+                    if (m.Success && m.Groups.Count > groupVal)
+                    {
+                        Scope.Set(paramName, m.Groups[groupVal].Value);
+                    }
+                }
             }
-
-            return this;
-        }
-
-
-        public override string ToString()
-        {
-            return DefineNode.GetFullPath();
         }
 
     }

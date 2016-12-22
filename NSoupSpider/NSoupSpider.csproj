@@ -47,6 +47,7 @@
     <Compile Include="ExecutionContextScope.cs" />
     <Compile Include="ExtractDataNode.cs" />
     <Compile Include="ExtractDocumentReport.cs" />
+    <Compile Include="ExtractElement.cs" />
     <Compile Include="ExtractMethod.cs" />
     <Compile Include="ExtractNode.cs" />
     <Compile Include="ExtractParam.cs" />
