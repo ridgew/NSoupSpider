@@ -123,6 +123,7 @@ namespace NSoupSpider
             return true;
         }
 
+
         public List<ExtractMethod> GetExtractMethods()
         {
             if (!IsReturNode()) return null;
@@ -157,14 +158,15 @@ namespace NSoupSpider
             {
                 //TODO
                 //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : extractIdFromNodeAttribute(_rawNode);
-                string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
-                CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
-                methods.Add(colMethod);
+
+                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
+                //CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
+                //methods.Add(colMethod);
             }
             return methods;
         }
 
-        public Elements ExtractElements(Element container)
+        public Elements ExtractContainerElements(Element container)
         {
             string cssQuery = GetCssQuery();
             return container.Select(cssQuery);
@@ -185,6 +187,38 @@ namespace NSoupSpider
             get { return childNodes; }
         }
 
+
+        protected object OnOpNode(object nodeVal)
+        {
+            XmlAttribute attr = _rawNode.Attributes["op"];
+            bool hasOp = attr != null && string.IsNullOrEmpty(attr.Value) == false;
+            if (hasOp == true)
+            {
+                if (nodeVal == null)
+                    return string.Empty;
+
+                string opExp = attr.Value;
+                if (opExp == "trim")
+                {
+                    char[] trimParams = _rawNode.Attributes["opParams"].Value.ToCharArray();
+                    return nodeVal.ToString().Trim(trimParams);
+                }
+            }
+            return nodeVal;
+        }
+
+        protected bool WhenNodeInContainer(Element container, Element opElement)
+        {
+            XmlAttribute attr = _rawNode.Attributes["when"];
+            bool hasWhen = attr != null && string.IsNullOrEmpty(attr.Value) == false;
+            if (hasWhen == true)
+            {
+                string whenExp = attr.Value;
+
+            }
+            return true;
+        }
+
         public static ExtractDataNode ExtractNodeAll(XmlNode node, int deepth)
         {
             ExtractDataNode eNode = new ExtractDataNode(node, deepth);
@@ -202,59 +236,101 @@ namespace NSoupSpider
             return eNode;
         }
 
-
-        public void ExtractDataAll(Element container)
+        void ExtractDataByRuleMethods(Element element)
         {
             List<ExtractMethod> fns = GetExtractMethods();
             if (fns != null && fns.Count > 0)
             {
+                int collectionDeepth = -1;
+                bool needPopUp = IsCollectionDescendants(out collectionDeepth);
                 foreach (ExtractMethod fn in fns)
                 {
-                    var dict = fn.ExtractFrom(container);
+                    var dict = fn.ExtractFrom(element);
                     if (dict != null)
                     {
                         foreach (var item in dict.Keys)
                         {
-                            Scope.Combine(Deepth, item, dict[item]);
+                            if (needPopUp == true || ParentExtractNode == null)
+                            {
+                                Scope.Set(item, OnOpNode(dict[item]));
+                            }
+                            else if (ParentExtractNode != null)
+                            {
+                                ParentExtractNode.Scope.Set(item, OnOpNode(dict[item]));
+                            }
                         }
                     }
                 }
 
-                int collectionDeepth = -1;
-                if (IsCollectionDescendants(out collectionDeepth))
+                if (needPopUp)
                 {
-                    Scope.ResetScopeObject(collectionDeepth + 1, Scope.GetScopeObject(Deepth));
+                    ExtractDataNode startNode = this;
+                    while (startNode != null && startNode.Deepth > collectionDeepth)
+                    {
+                        startNode.Scope.PopUp(true);
+                        startNode = startNode.ParentExtractNode;
+                    }
                 }
             }
+        }
 
-            var subElements = ExtractElements(container);
-            if (subElements != null && subElements.Count > 0)
+        void ExtractChild(Element container)
+        {
+            foreach (ExtractDataNode node in ChildNodes)
+            {
+                if (node.DefineNode.Name.Equals("attrs", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    //属性提取
+                }
+                else if (node.DefineNode.Name.Equals("when", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    //条件提取
+                }
+                else if (node.DefineNode.Name.Equals("params", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    //变量（参数）绑定
+                }
+                node.ExtractDataAll(container);
+            }
+        }
+
+        public void ExtractDataAll(Element container)
+        {
+            var allMatchElements = ExtractContainerElements(container);
+            if (allMatchElements != null && allMatchElements.Count > 0)
             {
                 if (IsReturnCollection())
                 {
+                    #region 集合直接处理子级
                     List<Dictionary<string, Object>> colist = new List<Dictionary<string, object>>();
-                    foreach (var subContainer in subElements)
+                    foreach (var subContainer in allMatchElements)
                     {
+                        Dictionary<string, Object> collectionItem = new Dictionary<string, object>();
                         foreach (ExtractDataNode node in ChildNodes)
                         {
                             node.ExtractDataAll(subContainer);
+                            Dictionary<string, Object> nodeScopeObj = node.Scope.GetPopObjectIteration();
+                            ExtractScope.MergingScopeObjectWith(nodeScopeObj, collectionItem, true);
                         }
-                        colist.Add(Scope.GetScopeObject(Deepth + 1));
-                        Scope.ResetScopeObject(Deepth + 1);
+                        colist.Add(collectionItem);
                     }
-                    Scope.Combine(Deepth, GetCollectionKey(), colist);
+                    Scope.Set(GetCollectionKey(), colist);
+                    #endregion
                 }
                 else
                 {
-                    foreach (var subContainer in subElements)
+                    foreach (var element in allMatchElements)
                     {
-                        foreach (ExtractDataNode node in ChildNodes)
-                        {
-                            node.ExtractDataAll(subContainer);
-                        }
+                        #region 本级处理
+                        if (WhenNodeInContainer(container, element) != false)
+                            ExtractDataByRuleMethods(element);
+                        #endregion
+
+                        #region 子级处理
+                        ExtractChild(element);
+                        #endregion
                     }
                 }
-
             }
         }
 

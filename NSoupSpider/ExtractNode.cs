@@ -20,6 +20,10 @@ namespace NSoupSpider
         {
             _rawNode = node;
             Deepth = deepth;
+
+            Scope.ScopeDeepth = deepth;
+            Scope.ScopeId = GetFullPath();
+            Scope.ContainerId = GetExtractContainerId();
         }
 
         protected XmlNode _rawNode = null;
@@ -107,11 +111,16 @@ namespace NSoupSpider
         /// <returns></returns>
         public string GetFullPath()
         {
+            return GetXmlNodeFullPath(_rawNode);
+        }
+
+        protected string GetXmlNodeFullPath(XmlNode node)
+        {
             List<string> pb = new List<string>();
-            if (DefineNode != null)
+            if (node != null)
             {
-                pb.Add(extractIdFromNodeAttribute(DefineNode));
-                XmlNode parent = DefineNode.ParentNode;
+                pb.Add(extractIdFromNodeAttribute(node));
+                XmlNode parent = node.ParentNode;
                 while (parent != null)
                 {
                     pb.Add(extractIdFromNodeAttribute(parent));
@@ -119,6 +128,15 @@ namespace NSoupSpider
                 };
             }
             return string.Join(">", pb.ToArray().Reverse());
+        }
+
+
+        protected string GetExtractContainerId()
+        {
+            if (_rawNode.ParentNode != null)
+                return GetXmlNodeFullPath(_rawNode.ParentNode);
+            else
+                return "^";
         }
 
 

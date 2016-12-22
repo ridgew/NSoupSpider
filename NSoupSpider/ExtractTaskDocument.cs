@@ -15,6 +15,11 @@ namespace NSoupSpider
         public ExtractTaskDocument(string xmlPath)
         {
             ExtractDocPath = xmlPath;
+
+            Scope.ScopeDeepth = 1;
+            Scope.ScopeId = "^";
+            Scope.ContainerId = null;
+
         }
 
         public string ExtractDocPath { get; set; }
