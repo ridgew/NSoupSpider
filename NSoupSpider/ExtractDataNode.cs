@@ -225,15 +225,8 @@ namespace NSoupSpider
         /// <returns></returns>
         public bool ExtractFirstOnly()
         {
-            XmlAttribute attr = _rawNode.Attributes["firstOnly"];
-            if (attr != null && string.IsNullOrEmpty(attr.Value) == false)
-            {
-                return Convert.ToBoolean(_rawNode.Attributes["return"].Value);
-            }
-            else
-            {
-                return false;
-            }
+            string attrVal = GetNotNullAttrValue("firstOnly");
+            return !string.IsNullOrEmpty(attrVal) && Convert.ToBoolean(attrVal);
         }
 
         public static ExtractDataNode ExtractNodeAll(XmlNode node, int deepth)
