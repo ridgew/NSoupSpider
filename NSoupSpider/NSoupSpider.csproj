@@ -50,6 +50,7 @@
     <Compile Include="ExtractElement.cs" />
     <Compile Include="ExtractMethod.cs" />
     <Compile Include="ExtractNode.cs" />
+    <Compile Include="ExtractPagerNode.cs" />
     <Compile Include="ExtractParam.cs" />
     <Compile Include="ScopeResult.cs" />
     <Compile Include="ExtractTaskDocument.cs" />

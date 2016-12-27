@@ -27,6 +27,21 @@ namespace NSoupSpider
 
         }
 
+        /// <summary>
+        /// 执行领域
+        /// </summary>
+        public ScopeMode Mode { get; set; }
+
+        protected ExtractScope _ContainerScope = null;
+        /// <summary>
+        /// 容器区间
+        /// </summary>
+        public ExtractScope ContainerScope
+        {
+            get { return _ContainerScope; }
+            set { _ContainerScope = value; }
+        }
+
         public int ScopeDeepth { get; set; }
 
         public string ScopeId { get; set; }
@@ -37,9 +52,8 @@ namespace NSoupSpider
         public void Set(string key, object value)
         {
             ExecutionContext current = GetCodeEnvContext();
-
-            string cmpScopeKey = getContainerKey(ScopeDeepth, ScopeId);
-            Dictionary<string, object> existDict = current.GetValue<Dictionary<string, object>>(cmpScopeKey);
+            string cmpScopeKey = GetWorkScopeKey();
+            IDictionary<string, object> existDict = cmpScopeKey == null ? current.Items : current.GetValue<Dictionary<string, object>>(cmpScopeKey);
             if (existDict == null)
             {
                 existDict = new Dictionary<string, object>();
@@ -57,34 +71,34 @@ namespace NSoupSpider
 
         }
 
-        string getContainerKey(int scopeLen, string containerId)
+        public string GetWorkScopeKey()
         {
-            return string.Format("#{0}#{1}", scopeLen, containerId ?? "^");
+            string targetKey = null;
+            switch (Mode)
+            {
+                case ScopeMode.Inherit:
+                    if (_ContainerScope != null)
+                        targetKey = _ContainerScope.GetWorkScopeKey();
+                    break;
+                case ScopeMode.CreateNew:
+                    targetKey = GetCurrentScopeKey();
+                    break;
+                case ScopeMode.Top:
+                default:
+                    break;
+            }
+            return targetKey;
         }
 
-        string getPopKey()
+        protected string GetCurrentScopeKey()
         {
-            return "ExtractScope#" + ScopeDeepth.ToString();
+            return "ExtractScope#" + ScopeId;
         }
 
-        protected void ResetScopeObject(Dictionary<string, object> dict = null)
+        public Dictionary<string, object> GetContainerObjectIteration()
         {
             ExecutionContext current = GetCodeEnvContext();
-            string cmpScopeKey = getContainerKey(ScopeDeepth, ScopeId);
-            current.SetValue(cmpScopeKey, dict ?? new Dictionary<string, object>());
-        }
-
-        public Dictionary<string, object> GetScopeObject()
-        {
-            ExecutionContext current = GetCodeEnvContext();
-            string cmpScopeKey = getContainerKey(ScopeDeepth, ScopeId);
-            return current.GetValue<Dictionary<string, object>>(cmpScopeKey);
-        }
-
-        public Dictionary<string, object> GetPopObjectIteration()
-        {
-            ExecutionContext current = GetCodeEnvContext();
-            string popKey = getPopKey();
+            string popKey = GetWorkScopeKey();
             Dictionary<string, object> ret = current.GetValue<Dictionary<string, object>>(popKey);
             current.SetValue(popKey, new Dictionary<string, object>());
             return ret;
@@ -101,12 +115,15 @@ namespace NSoupSpider
 
         public int PopUp(bool overWrite = false)
         {
+            if (Mode != ScopeMode.CreateNew)
+                return ScopeDeepth - 1;
+
             ExecutionContext current = GetCodeEnvContext();
-            string cmpScopeKey = getContainerKey(ScopeDeepth, ScopeId);
+            string cmpScopeKey = GetWorkScopeKey();
             Dictionary<string, object> scopeObj = current.GetValue<Dictionary<string, object>>(cmpScopeKey);
             if (scopeObj == null)
             {
-                Dictionary<string, object> thisPopObject = current.GetValue<Dictionary<string, object>>(getPopKey());
+                Dictionary<string, object> thisPopObject = current.GetValue<Dictionary<string, object>>(GetCurrentScopeKey());
                 if (thisPopObject == null)
                     return ScopeDeepth;
                 else
@@ -114,7 +131,7 @@ namespace NSoupSpider
             }
 
             int rightScopeDeepth = ScopeDeepth - 1;
-            string popKey = string.Format("ExtractScope#{0}", rightScopeDeepth);
+            string popKey = (_ContainerScope != null) ? _ContainerScope.GetWorkScopeKey() : string.Format("ExtractScope#{0}", rightScopeDeepth);
             Dictionary<string, object> popDict = current.GetValue<Dictionary<string, object>>(popKey);
             if (popDict == null)
             {
@@ -147,7 +164,6 @@ namespace NSoupSpider
 
         }
 
-
         public static Dictionary<string, object> MergingAllScopeObject()
         {
             ExecutionContext current = GetCodeEnvContext();
@@ -161,6 +177,22 @@ namespace NSoupSpider
             return rootObject;
         }
 
+    }
+
+    public enum ScopeMode : int
+    {
+        /// <summary>
+        /// 继承
+        /// </summary>
+        Inherit = 0,
+        /// <summary>
+        /// 创建新的运行域
+        /// </summary>
+        CreateNew = 1,
+        /// <summary>
+        /// 顶级运行域（0级）
+        /// </summary>
+        Top = 2
     }
 
 }

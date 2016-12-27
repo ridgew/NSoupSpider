@@ -24,6 +24,19 @@ namespace NSoupSpider
             Scope.ScopeDeepth = deepth;
             Scope.ScopeId = GetFullPath();
             Scope.ContainerId = GetExtractContainerId();
+
+            initialize();
+        }
+
+        void initialize()
+        {
+            string scopeDef = GetNotNullAttrValue("scope");
+            if (scopeDef == "new")
+                Scope.Mode = ScopeMode.CreateNew;
+            else if (scopeDef == "top")
+                Scope.Mode = ScopeMode.Top;
+            else
+                Scope.Mode = ScopeMode.Inherit;
         }
 
         protected XmlNode _rawNode = null;
@@ -141,11 +154,7 @@ namespace NSoupSpider
 
         protected string GetNotNullAttrValue(string attrName)
         {
-            string NotNull = String.Empty;
-            XmlAttribute attr = _rawNode.Attributes[attrName];
-            if (attr != null)
-                NotNull = attr.Value ?? "";
-            return NotNull;
+            return GetNodeNotNullAttrValue(_rawNode, attrName);
         }
 
         public bool IsOperateNode()
@@ -156,6 +165,15 @@ namespace NSoupSpider
         internal XmlNodeList GetChildXmlNodes()
         {
             return _rawNode.ChildNodes;
+        }
+
+        protected static string GetNodeNotNullAttrValue(XmlNode node, string attrName)
+        {
+            string NotNull = String.Empty;
+            XmlAttribute attr = node.Attributes[attrName];
+            if (attr != null)
+                NotNull = attr.Value ?? "";
+            return NotNull;
         }
     }
 

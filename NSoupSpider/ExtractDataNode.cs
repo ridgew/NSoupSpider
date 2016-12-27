@@ -16,6 +16,7 @@ namespace NSoupSpider
         internal ExtractDataNode(XmlNode node, int deepth)
             : base(node, deepth)
         {
+
         }
 
         public string GetCssQuery()
@@ -60,19 +61,6 @@ namespace NSoupSpider
             if (_rawNode.Attributes["returnCollection"] != null)
             {
                 return Convert.ToBoolean(_rawNode.Attributes["returnCollection"].Value);
-            }
-            return false;
-        }
-
-        protected bool IsCollection()
-        {
-            if (_rawNode.Attributes["returnCollection"] != null)
-            {
-                return Convert.ToBoolean(_rawNode.Attributes["returnCollection"].Value);
-            }
-            else if (_rawNode.Attributes["class"] != null && string.IsNullOrEmpty(_rawNode.Attributes["class"].Value) == false)
-            {
-                return !(_rawNode.Attributes["firstOnly"] != null && Convert.ToBoolean(_rawNode.Attributes["firstOnly"].Value));
             }
             return false;
         }
@@ -124,12 +112,20 @@ namespace NSoupSpider
         }
 
 
-        public List<ExtractMethod> GetExtractMethods()
+        public virtual List<ExtractMethod> GetExtractMethods()
         {
             if (!IsReturNode()) return null;
 
             List<ExtractMethod> methods = new List<ExtractMethod>();
-            if (IsReturnCollection() == false)
+            if (IsReturnCollection() == true)
+            {
+                //TODO
+                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : extractIdFromNodeAttribute(_rawNode);
+                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
+                //CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
+                //methods.Add(colMethod);
+            }
+            else
             {
                 #region 非集合提取
                 AttributeExtractMethod attr = new AttributeExtractMethod();
@@ -153,15 +149,6 @@ namespace NSoupSpider
                 attr.AttrNames = mapList;
                 methods.Add(attr);
                 #endregion
-            }
-            else
-            {
-                //TODO
-                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : extractIdFromNodeAttribute(_rawNode);
-
-                //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
-                //CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
-                //methods.Add(colMethod);
             }
             return methods;
         }
@@ -214,7 +201,7 @@ namespace NSoupSpider
             if (hasWhen == true)
             {
                 string whenExp = attr.Value;
-
+                //TODO:条件运行
             }
             return true;
         }
@@ -239,14 +226,30 @@ namespace NSoupSpider
                 {
                     XmlNode subNode = nodesList[i];
                     ExtractDataNode childNode = ExtractDataNode.ExtractNodeAll(subNode, deepth + 1);
-                    childNode.ParentExtractNode = eNode;
-                    eNode.ChildNodes.Add(childNode);
+                    string pagerAttr = GetNodeNotNullAttrValue(subNode, "isPage");
+                    if (!string.IsNullOrEmpty(pagerAttr) && Convert.ToBoolean(pagerAttr))
+                    {
+                        //分页节点定义
+                        ExtractPagerNode pagerNode = new ExtractPagerNode(subNode, deepth + 1);
+
+                        if (childNode.ChildNodes.Count > 0)
+                            pagerNode.ChildNodes.AddRange(childNode.ChildNodes);
+
+                        pagerNode.ParentExtractNode = eNode;
+                        eNode.childNodes.Add(pagerNode);
+                    }
+                    else
+                    {
+                        childNode.ParentExtractNode = eNode;
+                        //childNode.Scope.ContainerScope = eNode.Scope.ContainerScope;
+                        eNode.ChildNodes.Add(childNode);
+                    }
                 }
             }
             return eNode;
         }
 
-        void ExtractDataByRuleMethods(Element element)
+        protected virtual void ExtractDataByRuleMethods(Element element)
         {
             List<ExtractMethod> fns = GetExtractMethods();
             if (fns != null && fns.Count > 0)
@@ -288,6 +291,9 @@ namespace NSoupSpider
         {
             foreach (ExtractDataNode node in ChildNodes)
             {
+                if (node.Scope.ContainerScope == null)
+                    node.Scope.ContainerScope = Scope;
+
                 if (node.DefineNode.Name.Equals("attrs", StringComparison.InvariantCultureIgnoreCase))
                 {
                     //属性提取
@@ -317,6 +323,9 @@ namespace NSoupSpider
             {
                 if (IsReturnCollection())
                 {
+                    string collectKey = GetCollectionKey();
+                    Scope.ScopeId = collectKey;
+
                     #region 集合直接处理子级
                     List<Dictionary<string, Object>> colist = new List<Dictionary<string, object>>();
                     foreach (var subContainer in allMatchElements)
@@ -324,13 +333,14 @@ namespace NSoupSpider
                         Dictionary<string, Object> collectionItem = new Dictionary<string, object>();
                         foreach (ExtractDataNode node in ChildNodes)
                         {
+                            node.Scope.ContainerScope = Scope;
                             node.ExtractDataAll(subContainer);
-                            Dictionary<string, Object> nodeScopeObj = node.Scope.GetPopObjectIteration();
+                            Dictionary<string, Object> nodeScopeObj = node.Scope.GetContainerObjectIteration();
                             ExtractScope.MergingScopeObjectWith(nodeScopeObj, collectionItem, true);
                         }
                         colist.Add(collectionItem);
                     }
-                    Scope.Set(GetCollectionKey(), colist);
+                    Scope.Set(collectKey, colist);
                     #endregion
                 }
                 else

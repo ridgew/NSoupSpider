@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml;
 
@@ -38,11 +39,20 @@ namespace NSoupSpider
                 if (opType.Equals("Regex", StringComparison.InvariantCultureIgnoreCase))
                 {
                     string pattern = GetNotNullAttrValue("pattern");
-                    int groupVal = Convert.ToInt32("0" + GetNotNullAttrValue("retGroup"));
-                    System.Text.RegularExpressions.Match m = System.Text.RegularExpressions.Regex.Match(rawReturn, pattern);
-                    if (m.Success && m.Groups.Count > groupVal)
+                    string retVal = GetNotNullAttrValue("retVal");
+                    if (string.IsNullOrEmpty(retVal))
                     {
-                        Scope.Set(paramName, m.Groups[groupVal].Value);
+                        int groupVal = Convert.ToInt32("0" + GetNotNullAttrValue("retGroup"));
+                        Match m = Regex.Match(rawReturn, pattern);
+                        if (m.Success && m.Groups.Count > groupVal)
+                        {
+                            Scope.Set(paramName, m.Groups[groupVal].Value);
+                        }
+                    }
+                    else
+                    {
+                        Regex RE = new Regex(pattern, RegexOptions.IgnoreCase);
+                        Scope.Set(paramName, RE.Replace(rawReturn, retVal));
                     }
                 }
             }

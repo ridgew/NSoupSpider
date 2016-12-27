@@ -5,7 +5,7 @@
     <param index="1" name="Asin" />
   </UrlPattern>
   <div id="olpOfferListColumn">
-    <div cssQuery="[class*='a-row a-spacing-mini olpOffer']" returnCollection="true" name="CompetivePricesList">
+    <div cssQuery="[class*='a-row a-spacing-mini olpOffer']" returnCollection="true" name="CompetivePricesList" scope="new">
       <div cssQuery="[class*='a-spacing-mini olpOffer']" >
         <span class="olpOfferPrice" retAttr="innerText" name="priceStr" />
         <span class="olpShippingPrice" retAttr="innerText" name="shippingFeeStr" firstOnly="true" />
