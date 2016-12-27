@@ -170,9 +170,17 @@ namespace NSoupSpider
             Dictionary<string, object> rootObject = new Dictionary<string, object>();
             foreach (var item in current.Items.Keys)
             {
-                var crtDict = current.Items[item] as IDictionary<string, object>;
-                if (crtDict != null)
-                    MergingScopeObjectWith(crtDict, rootObject, true);
+                if (current.Items[item] is IDictionary<string, object>)
+                {
+                    var crtDict = current.Items[item] as IDictionary<string, object>;
+                    if (crtDict != null)
+                        MergingScopeObjectWith(crtDict, rootObject, true);
+                }
+                else
+                {
+                    if (!rootObject.ContainsKey(item))
+                        rootObject[item] = current.Items[item];
+                }
             }
             return rootObject;
         }

@@ -28,19 +28,23 @@ namespace NSoupSpiderTester
 
         void TestDocumentWithRules(string docPath, string rulePath)
         {
-            string html = File.ReadAllText(docPath);
-            Document rootDoc = NSoupClient.Parse(html);
+
             using (ExecutionContextScope scope = new ExecutionContextScope())
             {
                 ExtractTaskDocument extraTask = new ExtractTaskDocument(rulePath).BindRules();
-                ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
+                extraTask.ExtractArguments.Add("SiteUrl", "https://www.amazon.co.uk");
+                extraTask.ExtractArguments.Add("Asin", "B009A4A8ZO");
+                extraTask.ExtractArguments.Add("SellerId", "APZXIW0LSZ4VN");
 
+                //Document rootDoc = extraTask.GetStartupDocument();
+                string html = File.ReadAllText(docPath);
+                Document rootDoc = NSoupClient.Parse(html);
+
+                ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
                 if (!report.IsSuccess())
                 {
                     throw report.ExtractExcetpion;
                 }
-
-                Dictionary<string, object> objRsult = ExtractScope.MergingAllScopeObject();
                 ExecutionContext context = ExecutionContext.Current;
 
             }

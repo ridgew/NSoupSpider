@@ -1,4 +1,5 @@
-﻿using NSoup.Nodes;
+﻿using NSoup;
+using NSoup.Nodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,41 @@ namespace NSoupSpider
             return this;
         }
 
+        protected Dictionary<string, object> defaultArgs = new Dictionary<string, object>();
+
+        /// <summary>
+        /// 抽取参数词典
+        /// </summary>
+        public Dictionary<string, object> ExtractArguments
+        {
+            get { return defaultArgs; }
+        }
+
+        public Document GetStartupDocument()
+        {
+            #region 绑定运行参数
+            if (ExtractArguments.Count > 0)
+            {
+                foreach (var key in ExtractArguments.Keys)
+                {
+                    ExtractParam param = EntryUrl.Params.FirstOrDefault(p => p.Name.Equals(key, StringComparison.InvariantCultureIgnoreCase));
+                    if (param != null)
+                        param.Value = ExtractArguments[key].ToString();
+                }
+            }
+            #endregion
+
+            if (EntryUrl == null)
+            {
+                throw new InvalidOperationException("EntryUrl没有绑定");
+            }
+            else
+            {
+                string srcUrl = EntryUrl.GetUrl();
+                return NSoupClient.Parse(new Uri(srcUrl), 5000);
+            }
+        }
+
         /// <summary>
         /// 无异常处理
         /// </summary>
@@ -104,6 +140,8 @@ namespace NSoupSpider
             {
                 ret.ExtractExcetpion = extractEx;
             }
+
+            ret.CurrentExtractResult = ExtractScope.MergingAllScopeObject();
             return ret;
         }
 

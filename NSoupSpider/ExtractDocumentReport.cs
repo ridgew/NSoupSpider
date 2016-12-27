@@ -15,5 +15,8 @@ namespace NSoupSpider
             return ExtractExcetpion == null;
         }
 
+        public Dictionary<string, object> CurrentExtractResult { get; set; }
+
+
     }
 }
