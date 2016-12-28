@@ -13,6 +13,11 @@ namespace NSoupSpider
     [Serializable]
     public class ExtractTaskDocument : WorkInScopeObject
     {
+        internal ExtractTaskDocument()
+        {
+
+        }
+
         public ExtractTaskDocument(string xmlPath)
         {
             ExtractDocPath = xmlPath;
@@ -22,6 +27,28 @@ namespace NSoupSpider
             Scope.ContainerId = null;
 
         }
+
+        /// <summary>
+        /// 从接口加载抽取文档定义
+        /// </summary>
+        /// <param name="rule"></param>
+        /// <returns></returns>
+        public static ExtractTaskDocument FromExtractRule(IExtractDocumentRule rule)
+        {
+            ExtractTaskDocument doc = new ExtractTaskDocument();
+            doc.Scope.ScopeDeepth = 1;
+            doc.Scope.ScopeId = "^";
+            doc.Scope.ContainerId = null;
+
+            doc.SrcType = RuleLoadSource.Interface;
+            ExtractScope.MergingScopeObjectWith(rule.StartupArguments(), doc.defaultArgs, true);
+
+            XmlDocument xmlDoc = rule.RuleDocument();
+            doc.parseRuleDocument(xmlDoc);
+            return doc;
+        }
+
+        public RuleLoadSource SrcType { get; internal set; }
 
         public string ExtractDocPath { get; set; }
 
@@ -43,7 +70,7 @@ namespace NSoupSpider
             get { return _extractNodes; }
         }
 
-        void parseRuleDocument(XmlDocument xmlDoc)
+        internal void parseRuleDocument(XmlDocument xmlDoc)
         {
             XmlElement doc = xmlDoc.DocumentElement;
             foreach (XmlNode node in doc.ChildNodes)
@@ -67,7 +94,7 @@ namespace NSoupSpider
 
         public ExtractTaskDocument BindRules()
         {
-            if (!System.IO.File.Exists(ExtractDocPath))
+            if (SrcType != RuleLoadSource.FileSystem || !System.IO.File.Exists(ExtractDocPath))
                 return this;
 
             XmlDocument xmlDoc = new XmlDocument();
@@ -181,9 +208,10 @@ namespace NSoupSpider
 
     }
 
-
-
-
-
+    public enum RuleLoadSource : int
+    {
+        FileSystem = 0,
+        Interface = 1
+    }
 
 }

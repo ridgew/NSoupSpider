@@ -52,10 +52,12 @@
     <Compile Include="ExtractNode.cs" />
     <Compile Include="ExtractPagerNode.cs" />
     <Compile Include="ExtractParam.cs" />
+    <Compile Include="ExtractTaskConfig.cs" />
     <Compile Include="ScopeResult.cs" />
     <Compile Include="ExtractTaskDocument.cs" />
     <Compile Include="NSoupDocumentSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpiderAgent.cs" />
     <Compile Include="UrlDataSource.cs" />
     <Compile Include="WorkInScopeObject.cs" />
   </ItemGroup>
