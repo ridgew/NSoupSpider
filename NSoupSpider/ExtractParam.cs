@@ -13,7 +13,17 @@ namespace NSoupSpider
         [XmlAttribute(AttributeName = "index")]
         public int Index { get; set; }
 
+        [XmlAttribute(AttributeName = "scope")]
+        public ParamScope Scope { get; set; }
+
         [XmlAttribute(AttributeName = "value")]
         public string Value { get; set; }
+    }
+
+    [Serializable]
+    public enum ParamScope : int
+    {
+        arguments = 0,
+        workScope = 1
     }
 }

@@ -52,7 +52,7 @@ namespace NSoupSpider
                 NodeType currentType = extractNode.GetExtractType();
                 if (currentType == NodeType.Element)
                 {
-                    _extractNodes.Add(ExtractDataNode.ExtractNodeAll(node, extractNode.Deepth));
+                    _extractNodes.Add(ExtractDataNode.ExtractNodeAll(node, extractNode.Deepth, this));
                 }
                 else if (currentType == NodeType.UrlPattern)
                 {
@@ -60,7 +60,7 @@ namespace NSoupSpider
                 }
                 else if (currentType == NodeType.ScopeResult)
                 {
-                    DocumentResult = new ScopeResult();
+                    DocumentResult = new ScopeResult(node, extractNode.Deepth);
                 }
             }
         }
@@ -108,8 +108,14 @@ namespace NSoupSpider
             else
             {
                 string srcUrl = EntryUrl.GetUrl();
-                return NSoupClient.Parse(new Uri(srcUrl), 5000);
+                DocumentUrl = srcUrl;
+                return GetDocumentByUrl(srcUrl);
             }
+        }
+
+        public Document GetDocumentByUrl(string url)
+        {
+            return NSoupClient.Parse(new Uri(url), 5000);
         }
 
         /// <summary>
@@ -128,12 +134,6 @@ namespace NSoupSpider
                     {
                         _node.ExtractDataAll(doc);
                     }
-
-                    //TODO绑定结果（集）
-                    if (DocumentResult != null)
-                    {
-
-                    }
                 }
             }
             catch (Exception extractEx)
@@ -142,8 +142,42 @@ namespace NSoupSpider
             }
 
             ret.CurrentExtractResult = ExtractScope.MergingAllScopeObject();
+
+            //绑定结果（集）
+            if (DocumentResult != null)
+                DocumentResult.DataBind(ret.CurrentExtractResult);
+
             return ret;
         }
+
+        public ExtractPagerNode GetPagerNode()
+        {
+            foreach (ExtractDataNode node in _extractNodes)
+            {
+                if (node.GetType().Equals(typeof(ExtractPagerNode)))
+                    return node as ExtractPagerNode;
+
+                ExtractPagerNode childPager = getPagerNodeFromExtractDataNode(node);
+                if (childPager != null)
+                    return childPager;
+            }
+            return null;
+        }
+
+        ExtractPagerNode getPagerNodeFromExtractDataNode(ExtractDataNode node)
+        {
+            foreach (ExtractDataNode subNode in node.ChildNodes)
+            {
+                if (subNode.GetType().Equals(typeof(ExtractPagerNode)))
+                    return subNode as ExtractPagerNode;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// 设置当前抽取文档绑定的URL地址
+        /// </summary>
+        public string DocumentUrl { get; set; }
 
     }
 

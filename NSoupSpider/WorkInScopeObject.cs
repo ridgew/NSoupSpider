@@ -68,7 +68,23 @@ namespace NSoupSpider
             {
                 existDict[key] = value;
             }
+        }
 
+        public T Get<T>(string itemName)
+        {
+            ExecutionContext current = GetCodeEnvContext();
+
+            object retVal = null;
+            string cmpScopeKey = GetWorkScopeKey();
+            IDictionary<string, object> scopeResult = cmpScopeKey == null ? current.Items : current.GetValue<Dictionary<string, object>>(cmpScopeKey);
+
+            if (scopeResult != null && scopeResult.ContainsKey(itemName))
+                retVal = scopeResult[itemName];
+
+            if (retVal != null)
+                return (T)Convert.ChangeType(retVal, typeof(T));
+
+            return default(T);
         }
 
         public string GetWorkScopeKey()

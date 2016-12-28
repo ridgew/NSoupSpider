@@ -19,6 +19,15 @@ namespace NSoupSpider
 
         }
 
+        /// <summary>
+        /// 所属抽取数据文档（规则）
+        /// </summary>
+        public ExtractTaskDocument OwnerTaskDocument
+        {
+            get;
+            protected set;
+        }
+
         public string GetCssQuery()
         {
             if (_rawNode == null) return string.Empty;
@@ -216,32 +225,34 @@ namespace NSoupSpider
             return !string.IsNullOrEmpty(attrVal) && Convert.ToBoolean(attrVal);
         }
 
-        public static ExtractDataNode ExtractNodeAll(XmlNode node, int deepth)
+        public static ExtractDataNode ExtractNodeAll(XmlNode node, int deepth, ExtractTaskDocument taskDoc)
         {
             ExtractDataNode eNode = new ExtractDataNode(node, deepth);
+            eNode.OwnerTaskDocument = taskDoc;
+
             XmlNodeList nodesList = node.ChildNodes;
             if (nodesList != null && nodesList.Count > 0)
             {
                 for (int i = 0, j = nodesList.Count; i < j; i++)
                 {
                     XmlNode subNode = nodesList[i];
-                    ExtractDataNode childNode = ExtractDataNode.ExtractNodeAll(subNode, deepth + 1);
+                    ExtractDataNode childNode = ExtractDataNode.ExtractNodeAll(subNode, deepth + 1, taskDoc);
                     string pagerAttr = GetNodeNotNullAttrValue(subNode, "isPage");
                     if (!string.IsNullOrEmpty(pagerAttr) && Convert.ToBoolean(pagerAttr))
                     {
                         //分页节点定义
                         ExtractPagerNode pagerNode = new ExtractPagerNode(subNode, deepth + 1);
+                        pagerNode.OwnerTaskDocument = taskDoc;
+                        pagerNode.ParentExtractNode = eNode;
 
                         if (childNode.ChildNodes.Count > 0)
                             pagerNode.ChildNodes.AddRange(childNode.ChildNodes);
-
-                        pagerNode.ParentExtractNode = eNode;
                         eNode.childNodes.Add(pagerNode);
                     }
                     else
                     {
+                        childNode.OwnerTaskDocument = taskDoc;
                         childNode.ParentExtractNode = eNode;
-                        //childNode.Scope.ContainerScope = eNode.Scope.ContainerScope;
                         eNode.ChildNodes.Add(childNode);
                     }
                 }

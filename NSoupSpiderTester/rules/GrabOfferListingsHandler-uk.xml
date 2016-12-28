@@ -29,8 +29,8 @@
           <attr name="innerText" value="Next" />
         </when>
         <params>
-          <param index="0" name="SiteUrl" />
-          <param index="1" name="nexHref" />
+          <param index="0" name="SiteUrl" scope="arguments" />
+          <param index="1" name="nexHref" scope="workScope"/>
         </params>
       </a>
     </element>

@@ -28,27 +28,47 @@ namespace NSoupSpiderTester
 
         void TestDocumentWithRules(string docPath, string rulePath)
         {
+            ExtractTaskDocument taskDoc = new ExtractTaskDocument(rulePath).BindRules();
+            taskDoc.ExtractArguments.Add("SiteUrl", "https://www.amazon.co.uk");
+            taskDoc.ExtractArguments.Add("Asin", "B009A4A8ZO");
+            taskDoc.ExtractArguments.Add("SellerId", "APZXIW0LSZ4VN");
 
+            //Document rootDoc = extraTask.GetStartupDocument();
+            string html = File.ReadAllText(docPath);
+            Document rootDoc = NSoupClient.Parse(html);
+
+
+        fetchPageData:
             using (ExecutionContextScope scope = new ExecutionContextScope())
             {
-                ExtractTaskDocument extraTask = new ExtractTaskDocument(rulePath).BindRules();
-                extraTask.ExtractArguments.Add("SiteUrl", "https://www.amazon.co.uk");
-                extraTask.ExtractArguments.Add("Asin", "B009A4A8ZO");
-                extraTask.ExtractArguments.Add("SellerId", "APZXIW0LSZ4VN");
-
-                //Document rootDoc = extraTask.GetStartupDocument();
-                string html = File.ReadAllText(docPath);
-                Document rootDoc = NSoupClient.Parse(html);
-
-                ExtractDocumentReport report = extraTask.ExtractWith(rootDoc);
+                ExtractDocumentReport report = taskDoc.ExtractWith(rootDoc);
                 if (!report.IsSuccess())
                 {
                     throw report.ExtractExcetpion;
                 }
-                ExecutionContext context = ExecutionContext.Current;
+                else
+                {
+                    ExtractPagerNode node = taskDoc.GetPagerNode();
+                    if (node != null)
+                    {
+                        List<string> nextUrls = node.GetPageUrlList();
+                        if (node.PageListType == PagerType.ByNext)
+                        {
+                            if (nextUrls.Any())
+                            {
+                                taskDoc.DocumentUrl = nextUrls[0];
+                                rootDoc = taskDoc.GetDocumentByUrl(taskDoc.DocumentUrl);
+                                goto fetchPageData;
+                            }
+                        }
+                        else
+                        {
+                            string currentDocUrl = taskDoc.EntryUrl.GetUrl();
+                        }
+                    }
+                }
 
             }
-
         }
 
         [TestMethod]

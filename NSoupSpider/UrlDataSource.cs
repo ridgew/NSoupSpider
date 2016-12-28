@@ -60,6 +60,7 @@ namespace NSoupSpider
                     ret.Params.Add(new ExtractParam
                     {
                         Index = idx,
+                        Scope = ParamScope.arguments,
                         Name = sub.Attributes["name"].Value
                     });
                     idx++;
