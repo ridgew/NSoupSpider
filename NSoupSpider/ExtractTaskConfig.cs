@@ -10,13 +10,13 @@ namespace NSoupSpider
     /// 抽取任务配置
     /// </summary>
     [Serializable]
-    public class ExtractTaskConfig
+    public abstract class ExtractTaskConfig
     {
         public ExtractCategory Category { get; set; }
 
-        public IExtractDocumentRule InvokeArguments { get; set; }
+        public abstract IExtractDocumentRule InvokeArguments { get; }
 
-        public INSoupSpiderReceiver DataReceiver { get; set; }
+        public abstract INSoupSpiderReceiver DataReceiver { get; }
     }
 
     public enum ExtractCategory : int
@@ -54,7 +54,7 @@ namespace NSoupSpider
         void Accept(Dictionary<string, object> resultDict);
     }
 
-    public interface IObjectListReceiver : ISimpleObjectReceiver
+    public interface IObjectListReceiver : INSoupSpiderReceiver
     {
         int RecordCount { get; set; }
 

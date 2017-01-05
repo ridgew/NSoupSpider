@@ -161,7 +161,16 @@ namespace NSoupSpider
             return rightScopeDeepth;
         }
 
-        internal static void MergingScopeObjectWith(IDictionary<string, object> toMergin, IDictionary<string, object> target, bool overWrite = false)
+        public static string NotNullStringOf(IDictionary<string, object> resultDict, string itemName)
+        {
+            if (resultDict.ContainsKey(itemName) && resultDict[itemName] != null)
+            {
+                return resultDict[itemName].ToString();
+            }
+            return string.Empty;
+        }
+
+        public static void MergingScopeObjectWith(IDictionary<string, object> toMergin, IDictionary<string, object> target, bool overWrite = false)
         {
             if (toMergin == null) return;
             List<string> scopeKeys = toMergin.Keys.ToList();

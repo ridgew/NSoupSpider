@@ -142,7 +142,18 @@ namespace NSoupSpider
 
         public Document GetDocumentByUrl(string url)
         {
-            return NSoupClient.Parse(new Uri(url), 5000);
+            if (url.StartsWith("http", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return NSoupClient.Parse(new Uri(url), 5000);
+            }
+            else
+            {
+                if (System.IO.File.Exists(url))
+                {
+                    return NSoupClient.Parse(new System.IO.FileStream(url, System.IO.FileMode.Open), "UTF-8");
+                }
+                return null;
+            }
         }
 
         /// <summary>

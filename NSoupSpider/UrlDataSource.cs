@@ -49,7 +49,14 @@ namespace NSoupSpider
 
         public static UrlPatternDatasource FromXmlNode(XmlNode node)
         {
-            string format = node.Attributes["format"].Value;
+            XmlAttribute attrFormat = node.Attributes["format"];
+            XmlAttribute attrExample = node.Attributes["example"];
+            if (attrFormat == null && attrExample != null)
+            {
+                return new UrlPatternDatasource(attrExample.Value);
+            }
+
+            string format = attrFormat.Value;
             UrlPatternDatasource ret = new UrlPatternDatasource(format);
 
             int idx = 0;

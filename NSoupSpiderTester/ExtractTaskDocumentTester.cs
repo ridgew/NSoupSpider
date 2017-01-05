@@ -17,8 +17,7 @@ namespace NSoupSpiderTester
     {
 
         //string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        //string baseDir = @"D:\DevRoot\NSoupSpider\NSoupSpiderTester\bin\Debug";
-        string baseDir = @"E:\Dev\Unit\rwgithub\NSoupSpider\NSoupSpiderTester\bin\Debug";
+        string baseDir = @"E:\Dev\proj\EnterpriseCommon\NSoupSpider\NSoupSpiderTester\bin\Debug";
 
         [TestMethod]
         public void DocReaderSellerNameTest()

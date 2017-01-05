@@ -45,7 +45,7 @@ namespace NSoupSpider
                                 rev2.RecordCount = allResultList.Count;
                                 allResultList.ForEach(ed =>
                                 {
-                                    rev2.Accept(ed);
+                                    rev2.Send(ed);
                                 });
                             }
                         }

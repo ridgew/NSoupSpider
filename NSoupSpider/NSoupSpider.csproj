@@ -12,6 +12,10 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,10 +35,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="NSoup, Version=0.8.0.0, Culture=neutral, PublicKeyToken=6d44e53f0a65e802, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\NSoup.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,6 +53,7 @@
     <Compile Include="ExtractPagerNode.cs" />
     <Compile Include="ExtractParam.cs" />
     <Compile Include="ExtractTaskConfig.cs" />
+    <Compile Include="HttpClient.cs" />
     <Compile Include="ScopeResult.cs" />
     <Compile Include="ExtractTaskDocument.cs" />
     <Compile Include="NSoupDocumentSource.cs" />
@@ -60,6 +61,15 @@
     <Compile Include="SpiderAgent.cs" />
     <Compile Include="UrlDataSource.cs" />
     <Compile Include="WorkInScopeObject.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\NSoup\NSoup\NSoup.csproj">
+      <Project>{ea189dc2-2c8d-4b50-bee8-8964d6bedf33}</Project>
+      <Name>NSoup</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
