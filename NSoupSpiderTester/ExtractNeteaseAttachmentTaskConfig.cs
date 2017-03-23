@@ -108,7 +108,7 @@ namespace NSoupSpiderTester
                     netClient.DownloadFile(realUrl, imgSaveDir + ImageName);
                 }
             }
-            System.Threading.Thread.Sleep(500);
+            //System.Threading.Thread.Sleep(500);
         }
     }
 

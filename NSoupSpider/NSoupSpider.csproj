@@ -53,7 +53,9 @@
     <Compile Include="ExtractPagerNode.cs" />
     <Compile Include="ExtractParam.cs" />
     <Compile Include="ExtractTaskConfig.cs" />
-    <Compile Include="HttpClient.cs" />
+    <Compile Include="HttpClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ScopeResult.cs" />
     <Compile Include="ExtractTaskDocument.cs" />
     <Compile Include="NSoupDocumentSource.cs" />

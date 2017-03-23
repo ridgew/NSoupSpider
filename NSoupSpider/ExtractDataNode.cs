@@ -97,6 +97,13 @@ namespace NSoupSpider
                     parentNode = parentNode.ParentExtractNode;
                 }
             }
+
+            if (IsReturnCollection())
+            {
+                deepth = Deepth;    //本身定义为集合
+                return true;
+            }
+
             return false;
         }
 
@@ -126,9 +133,9 @@ namespace NSoupSpider
             if (!IsReturNode()) return null;
 
             List<ExtractMethod> methods = new List<ExtractMethod>();
-            if (IsReturnCollection() == true)
+            if (IsReturnCollection() == true && ChildNodes.Count > 0)
             {
-                //TODO
+                //TODO 通过子节点提取数据
                 //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : extractIdFromNodeAttribute(_rawNode);
                 //string collectionKey = _rawNode.Attributes["name"] != null ? _rawNode.Attributes["name"].Value : GetFullPath();
                 //CollectionExtractMethod colMethod = new CollectionExtractMethod(collectionKey, null);
@@ -286,7 +293,7 @@ namespace NSoupSpider
                     }
                 }
 
-                if (needPopUp)
+                if (needPopUp && collectionDeepth < Deepth)
                 {
                     ExtractDataNode startNode = this;
                     while (startNode != null && startNode.Deepth > collectionDeepth)
@@ -342,12 +349,21 @@ namespace NSoupSpider
                     foreach (var subContainer in allMatchElements)
                     {
                         Dictionary<string, Object> collectionItem = new Dictionary<string, object>();
-                        foreach (ExtractDataNode node in ChildNodes)
+                        if (childNodes.Count == 0)
                         {
-                            node.Scope.ContainerScope = Scope;
-                            node.ExtractDataAll(subContainer);
-                            Dictionary<string, Object> nodeScopeObj = node.Scope.GetContainerObjectIteration();
+                            ExtractDataByRuleMethods(subContainer);
+                            Dictionary<string, Object> nodeScopeObj = Scope.GetContainerObjectIteration();
                             ExtractScope.MergingScopeObjectWith(nodeScopeObj, collectionItem, true);
+                        }
+                        else
+                        {
+                            foreach (ExtractDataNode node in ChildNodes)
+                            {
+                                node.Scope.ContainerScope = Scope;
+                                node.ExtractDataAll(subContainer);
+                                Dictionary<string, Object> nodeScopeObj = node.Scope.GetContainerObjectIteration();
+                                ExtractScope.MergingScopeObjectWith(nodeScopeObj, collectionItem, true);
+                            }
                         }
                         colist.Add(collectionItem);
                     }
