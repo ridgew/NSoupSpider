@@ -49,6 +49,17 @@ namespace NSoupSpider
 
     }
 
+    /// <summary>
+    /// 需要合并的数据接收器
+    /// </summary>
+    public interface INSoupMerginReceiver
+    {
+        /// <summary>
+        /// 处理数据合并
+        /// </summary>
+        void Mergin();
+    }
+
     public interface ISimpleObjectReceiver : INSoupSpiderReceiver
     {
         void Accept(Dictionary<string, object> resultDict);

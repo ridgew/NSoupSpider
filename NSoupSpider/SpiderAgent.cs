@@ -78,6 +78,13 @@ namespace NSoupSpider
                         #endregion
                     }
 
+                    #region Mergin Action
+                    if (task.DataReceiver is INSoupMerginReceiver)
+                    {
+                        ((INSoupMerginReceiver)task.DataReceiver).Mergin();
+                    }
+                    #endregion
+
                     #region 持续抽取（重复）
                     ExtractPagerNode node = taskDoc.GetPagerNode();
                     if (node != null)

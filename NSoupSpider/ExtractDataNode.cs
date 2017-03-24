@@ -163,6 +163,16 @@ namespace NSoupSpider
                     }
                 }
                 attr.AttrNames = mapList;
+
+                #region when
+                XmlAttribute whenAttr = _rawNode.Attributes["when"];
+                if (whenAttr != null)
+                {
+                    attr.Type = ExtractType.ConditionalAttribute;
+                    attr.ConditionalNode = _rawNode;
+                }
+                #endregion
+
                 methods.Add(attr);
                 #endregion
             }
@@ -218,6 +228,7 @@ namespace NSoupSpider
             {
                 string whenExp = attr.Value;
                 //TODO:条件运行
+                //return opElement.Select("strong").Count == 0;
             }
             return true;
         }
@@ -329,7 +340,15 @@ namespace NSoupSpider
                 }
                 else
                 {
-                    node.ExtractDataAll(container);
+                    XmlAttribute whenAttr = node.DefineNode.Attributes["when"];
+                    if (whenAttr == null)
+                    {
+                        node.ExtractDataAll(container);
+                    }
+                    else
+                    {
+                        string whenExp = whenAttr.Value;
+                    }
                 }
             }
         }

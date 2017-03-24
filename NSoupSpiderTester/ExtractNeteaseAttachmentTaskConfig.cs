@@ -36,7 +36,7 @@ namespace NSoupSpiderTester
         {
             string ruleXml = @"<?xml version=""1.0"" encoding=""utf-8"" ?>
 <root>
-<UrlPattern example=""E:\Dev\Unit\rwgithub\NSoupSpider\NSoupSpiderTester\testDocs\netease-attatchment.htm"" />
+<UrlPattern example=""\NSoupSpider\NSoupSpiderTester\testDocs\netease-attatchment.htm"" />
 <div id=""divNeteaseBigAttach"">
 	<div cssQuery=""[style*='clear:both;height:36px;padding:6px 4px']"" returnCollection=""true"" name=""imgList"" scope=""new"">
 		<div cssQuery=""[style*='padding:0px;font-size:12px;line-height:14px']"">
@@ -94,7 +94,7 @@ namespace NSoupSpiderTester
             string ImageName = resultDict["ImageName"].ToString();
             string urlPage = resultDict["DownLoadPage"].ToString();
 
-            string imgSaveDir = @"E:\Dev\Unit\rwgithub\NSoupSpider\TestImages\";
+            string imgSaveDir = @"\NSoupSpider\TestImages\";
             string fileHtml = netClient.DownloadString(urlPage);
             string startKey = "downloadlink = '";
             int fileUrlIdx = fileHtml.IndexOf(startKey);

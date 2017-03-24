@@ -7,10 +7,12 @@ using NSoup;
 using NSoupSpider;
 using NSoup.Nodes;
 using NSoup.Select;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NSoupSpiderTester
 {
-    class Program
+    [TestClass]
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -27,5 +29,34 @@ namespace NSoupSpiderTester
             }
 
         }
+
+        [TestMethod]
+        public void WishColorSyncTest()
+        {
+            WishColorSyncTask cfg = new WishColorSyncTask();
+            try
+            {
+                SpiderAgent.Execute(cfg);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public void WishSizeSyncTest()
+        {
+            WishSizeSyncTask cfg = new WishSizeSyncTask();
+            try
+            {
+                SpiderAgent.Execute(cfg);
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
     }
 }
